@@ -64,8 +64,10 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
   })
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-background focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/20">
-      {editor ? <Toolbar editor={editor} /> : <div className="h-[49px] border-b" />}
+    // No overflow-hidden here: it would make this box the sticky container and
+    // push the toolbar down over the text. The toolbar rounds its own corners.
+    <div className="rounded-2xl border bg-background focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/20">
+      {editor ? <Toolbar editor={editor} /> : <div className="h-[49px] rounded-t-2xl border-b" />}
       <EditorContent editor={editor} />
     </div>
   )
@@ -96,7 +98,7 @@ function Toolbar({ editor }: { editor: Editor }) {
   const chain = () => editor.chain().focus()
 
   return (
-    <div role="toolbar" aria-label="Formatting" className="sticky top-16 z-10 flex flex-wrap items-center gap-0.5 border-b bg-background/95 px-2 py-1.5 backdrop-blur">
+    <div role="toolbar" aria-label="Formatting" className="sticky top-16 z-10 flex flex-wrap items-center gap-0.5 rounded-t-2xl border-b bg-background/95 px-2 py-1.5 backdrop-blur">
       <Tool label="Paragraph" active={state.paragraph} onClick={() => chain().setParagraph().run()} icon={Pilcrow} />
       <Tool label="Heading 2" active={state.h2} onClick={() => chain().toggleHeading({ level: 2 }).run()} icon={Heading2} />
       <Tool label="Heading 3" active={state.h3} onClick={() => chain().toggleHeading({ level: 3 }).run()} icon={Heading3} />

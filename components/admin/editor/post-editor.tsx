@@ -282,7 +282,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
 
           <Controller control={control} name="content" render={({ field }) => <RichTextEditor value={field.value} onChange={field.onChange} />} />
           <p className="-mt-3 text-right text-xs text-muted-foreground tabular-nums">
-            {words.toLocaleString("en-GB")} words · {readingTime(values.content || "")} min read
+            {words.toLocaleString("en-GB")} {words === 1 ? "word" : "words"} · {readingTime(values.content || "")} min read
           </p>
 
           <Section title="Excerpt" hint="Shown on cards and in search results. 1–2 sentences.">
