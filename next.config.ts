@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import { imageCdnOrigin } from "./lib/image-cdn"
 
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
@@ -7,7 +8,7 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 // Optional image domain (e.g. https://cdn.mainstreamtech.co.uk) pointing at
 // this same Vercel project. Leave unset until that domain resolves, or every
 // image breaks. Unset = images load from the site's own domain.
-const imageCdn = process.env.NEXT_PUBLIC_IMAGE_CDN_URL?.replace(/\/+$/, "")
+const imageCdn = imageCdnOrigin()
 
 const nextConfig: NextConfig = {
   // Lets the admin dev server (npm run dev:admin) build into its own folder

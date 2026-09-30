@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import { imageCdnOrigin } from "@/lib/image-cdn"
 import type { Database } from "@/types/database.types"
 
 const ADMIN_PATHS = ["/admin", "/login", "/auth", "/preview"]
@@ -31,7 +32,7 @@ function splitOriginRedirect(request: NextRequest): NextResponse | null {
  * there is permanently redirected to the main site so content isn't duplicated.
  */
 function imageDomainRedirect(request: NextRequest): NextResponse | null {
-  const cdn = process.env.NEXT_PUBLIC_IMAGE_CDN_URL
+  const cdn = imageCdnOrigin()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   if (!cdn || !siteUrl) return null
   // Use the Host header: request.nextUrl reports the server's own host.
