@@ -81,6 +81,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"post_views": {
+                  Row: {
+                    "id": number,"post_id": string,"referrer": string | null,"viewed_at": string,"visitor_id": string
+                  }
+                  Insert: {
+                    "id"?: never,"post_id": string,"referrer"?: string | null,"viewed_at"?: string,"visitor_id": string
+                  }
+                  Update: {
+                    "id"?: never,"post_id"?: string,"referrer"?: string | null,"viewed_at"?: string,"visitor_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "post_views_post_id_fkey"
+      columns: ["post_id"]
+isOneToOne: false
+      referencedRelation: "posts"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"posts": {
                   Row: {
                     "author_id": string | null,"category_id": string | null,"content": string,"cover_image_url": string | null,"created_at": string,"excerpt": string | null,"featured": boolean,"id": string,"meta_description": string | null,"meta_title": string | null,"published_at": string | null,"reading_time": number,"search_vector": unknown,"slug": string,"status": string,"title": string,"updated_at": string,"views": number
@@ -160,6 +179,29 @@ isOneToOne: false
 "search_posts":
 { Args: { "page_limit"?: number,"page_offset"?: number,"search_query": string }; Returns: {
               "author_id": string,"category_id": string,"cover_image_url": string,"excerpt": string,"headline": string,"id": string,"published_at": string,"rank": number,"reading_time": number,"slug": string,"title": string,"total_count": number
+            }[]
+                           },
+"track_post_view":
+{ Args: { "post_slug": string,"referrer_host"?: string,"visitor": string }; Returns: undefined
+                           },
+"visitor_daily":
+{ Args: { "from_ts": string,"to_ts": string }; Returns: {
+              "day": string,"views": number,"visitors": number
+            }[]
+                           },
+"visitor_referrers":
+{ Args: { "from_ts": string,"max_rows"?: number,"to_ts": string }; Returns: {
+              "referrer": string,"views": number,"visitors": number
+            }[]
+                           },
+"visitor_top_posts":
+{ Args: { "from_ts": string,"max_rows"?: number,"to_ts": string }; Returns: {
+              "post_id": string,"slug": string,"title": string,"views": number,"visitors": number
+            }[]
+                           },
+"visitor_totals":
+{ Args: { "from_ts": string,"to_ts": string }; Returns: {
+              "stories": number,"views": number,"visitors": number
             }[]
                            }
           }

@@ -49,9 +49,6 @@ export function AdminShell({
           <CreateButton />
         </div>
         <SidebarNav role={user.role} />
-        <div className="p-4">
-          <SiteCard siteHref={siteHref} />
-        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -72,9 +69,6 @@ export function AdminShell({
                 <CreateButton onNavigate={() => setMobileOpen(false)} />
               </div>
               <SidebarNav role={user.role} onNavigate={() => setMobileOpen(false)} />
-              <div className="p-4">
-                <SiteCard siteHref={siteHref} />
-              </div>
             </SheetContent>
           </Sheet>
 
@@ -90,6 +84,11 @@ export function AdminShell({
           </form>
 
           <div className="ml-auto flex items-center gap-1.5">
+            <Button asChild variant="outline" className="hidden h-9 rounded-xl sm:inline-flex">
+              <a href={siteHref} target="_blank" rel="noopener noreferrer">
+                <Globe /> Visit Site
+              </a>
+            </Button>
             <ThemeToggle />
             <NotificationsBell notifications={notifications} />
             <DropdownMenu>
@@ -141,23 +140,6 @@ function CreateButton({ onNavigate }: { onNavigate?: () => void }) {
         <Plus className="size-4" /> Create Article
       </Link>
     </Button>
-  )
-}
-
-function SiteCard({ siteHref }: { siteHref: string }) {
-  return (
-    <div className="rounded-2xl bg-muted p-4 text-center">
-      <span className="mx-auto grid size-10 place-items-center rounded-full bg-background shadow-sm">
-        <Globe className="size-5" aria-hidden />
-      </span>
-      <p className="mt-3 font-semibold">Your site is live</p>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Every story you publish goes straight to Mainstream Tech.</p>
-      <Button asChild variant="outline" size="sm" className="mt-3 w-full bg-background">
-        <a href={siteHref} target="_blank" rel="noopener noreferrer">
-          View site <ExternalLink />
-        </a>
-      </Button>
-    </div>
   )
 }
 
