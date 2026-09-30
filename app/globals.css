@@ -208,3 +208,8 @@
 .tiptap img.ProseMirror-selectednode {
   outline: 3px solid var(--brand);
 }
+
+/* CMS: headings use the sans font instead of the site's serif. */
+.admin-ui :is(h1, h2, h3, h4) {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}

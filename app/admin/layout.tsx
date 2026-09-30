@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { AdminShell } from "@/components/admin/admin-shell"
 import { requireUser } from "@/lib/auth"
+import { getNotifications } from "@/lib/queries/admin"
 import { siteUrl } from "@/lib/urls"
 
 export const metadata: Metadata = {
@@ -9,11 +10,14 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, profile } = await requireUser()
+  const session = await requireUser()
+  const { user, profile } = session
+  const notifications = await getNotifications(session)
 
   return (
     <AdminShell
       siteHref={siteUrl("/")}
+      notifications={notifications}
       user={{
         name: profile.full_name || profile.username || user.email || "Team member",
         email: user.email ?? "",

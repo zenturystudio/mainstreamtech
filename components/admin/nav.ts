@@ -1,5 +1,4 @@
 import {
-  FilePlus2,
   FileText,
   FileImage,
   FolderTree,
@@ -23,7 +22,6 @@ export const adminNav: { title?: string; items: AdminNavItem[] }[] = [
     title: "Content",
     items: [
       { label: "Posts", href: "/admin/posts", icon: FileText, exact: true },
-      { label: "New post", href: "/admin/posts/new", icon: FilePlus2 },
       { label: "Categories", href: "/admin/categories", icon: FolderTree },
       { label: "Tags", href: "/admin/tags", icon: Tags },
       { label: "Media", href: "/admin/media", icon: Images, exact: true },

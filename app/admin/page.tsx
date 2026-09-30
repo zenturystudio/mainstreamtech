@@ -1,111 +1,87 @@
-import Link from "next/link"
-import { BarChart3, Eye, FilePen, FileText, Mail, Plus, Send, Timer, TriangleAlert } from "lucide-react"
-import { AdminEmpty, PageHeading, Panel } from "@/components/admin/page-heading"
-import { StatusBadge } from "@/components/admin/status-badge"
-import { ViewsChart } from "@/components/admin/views-chart"
-import { Button } from "@/components/ui/button"
+import { Suspense } from "react"
+import { TriangleAlert } from "lucide-react"
+import { Card, CardLink, ChangePill, NextScheduled, RecentlyUpdated, StatBlock, TopArticles } from "@/components/admin/dashboard/cards"
+import { DashboardHeader } from "@/components/admin/dashboard/dashboard-header"
+import { ViewsChart } from "@/components/admin/dashboard/views-chart"
 import { requireUser } from "@/lib/auth"
-import { getDashboardData } from "@/lib/queries/admin"
-import type { PostStatus } from "@/lib/posts"
-import { timeAgo } from "@/lib/utils"
+import { getDashboard, type DashboardRange } from "@/lib/queries/admin"
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {
-  const [session, { denied }] = await Promise.all([requireUser(), searchParams])
-  const { stats, recent, top } = await getDashboardData(session)
+const RANGE_LABEL: Record<DashboardRange, string> = { week: "last 7 days", month: "last 30 days", year: "last 12 months" }
+const nf = new Intl.NumberFormat("en-GB")
+
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ denied?: string; range?: string }> }) {
+  const [session, params] = await Promise.all([requireUser(), searchParams])
+  const range: DashboardRange = params.range === "week" || params.range === "year" ? params.range : "month"
+  const data = await getDashboard(session, range)
   const firstName = (session.profile.full_name || session.profile.username || "there").split(" ")[0]
-
-  const cards = [
-    { label: "Total posts", value: stats.total, icon: FileText },
-    { label: "Published", value: stats.published, icon: Send },
-    { label: "Drafts", value: stats.drafts, icon: FilePen },
-    { label: "Scheduled", value: stats.scheduled, icon: Timer },
-    { label: session.isAdmin ? "Total views" : "Views on my posts", value: stats.views, icon: Eye },
-    ...(stats.subscribers !== null ? [{ label: "Subscribers", value: stats.subscribers, icon: Mail }] : []),
-  ]
 
   return (
     <div className="mx-auto max-w-7xl">
-      {denied && (
+      {params.denied && (
         <p role="alert" className="mb-6 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
           <TriangleAlert className="size-4 shrink-0" aria-hidden /> That page is only available to admins.
         </p>
       )}
 
-      <PageHeading
-        title={`Welcome back, ${firstName}`}
-        description={session.isAdmin ? "Here's what's happening across Mainstream Tech." : "Here's how your stories are doing."}
-        actions={
-          <Button asChild className="h-9">
-            <Link href="/admin/posts/new">
-              <Plus /> New post
-            </Link>
-          </Button>
-        }
-      />
+      <Suspense>
+        <DashboardHeader firstName={firstName} range={range} />
+      </Suspense>
 
-      <dl className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
-        {cards.map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-2xl border bg-background p-5">
-            <dt className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
-              {label}
-              <Icon className="size-4" aria-hidden />
-            </dt>
-            <dd className="mt-3 text-3xl font-bold tracking-tight tabular-nums">{value.toLocaleString("en-GB")}</dd>
-          </div>
-        ))}
-      </dl>
-
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
-        <Panel title="Most viewed" className="xl:col-span-3">
-          {top.length ? (
-            <div className="p-5">
-              <ViewsChart data={top.map((p) => ({ id: p.id, title: p.title, views: p.views }))} />
+      <div className="grid gap-5 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="font-semibold">Views</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2.5">
+                <p className="text-4xl font-bold tracking-tight tabular-nums">{nf.format(data.views.total)}</p>
+                <ChangePill change={data.views.change} />
+              </div>
             </div>
-          ) : (
-            <AdminEmpty icon={BarChart3} title="No views yet" description="Views appear here once posts are published and read." />
-          )}
-        </Panel>
+            <p className="rounded-lg bg-muted px-3 py-1.5 text-sm font-medium">{RANGE_LABEL[range]}</p>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Views on stories published in the {RANGE_LABEL[range]}, by publish date · {nf.format(data.views.allTime)} views all time
+          </p>
+          <div className="mt-4">
+            <ViewsChart data={data.series} />
+          </div>
+        </Card>
 
-        <Panel
-          title="Recently updated"
-          className="xl:col-span-2"
-          action={
-            <Link href="/admin/posts" className="text-sm font-medium text-brand hover:underline">
-              View all
-            </Link>
-          }
-        >
-          {recent.length ? (
-            <ul className="divide-y">
-              {recent.map((p) => (
-                <li key={p.id}>
-                  <Link href={`/admin/posts/${p.id}/edit`} className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-muted/50">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">{p.title}</p>
-                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                        {p.author?.full_name ?? "Unknown"} · updated {timeAgo(p.updated_at)}
-                      </p>
-                    </div>
-                    <StatusBadge status={p.status as PostStatus} publishedAt={p.published_at} />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <AdminEmpty
-              icon={FileText}
-              title="No posts yet"
-              description="Write your first story to get started."
-              action={
-                <Button asChild size="sm">
-                  <Link href="/admin/posts/new">
-                    <Plus /> New post
-                  </Link>
-                </Button>
-              }
+        <Card className="flex flex-col justify-between gap-6">
+          {data.subscribers ? (
+            <StatBlock
+              label="Subscribers"
+              value={data.subscribers.total}
+              change={data.subscribers.change}
+              previous={`From ${nf.format(data.subscribers.previous)} at the start of the period`}
+              href="/admin/subscribers"
+              linkLabel="View detail"
             />
+          ) : (
+            <StatBlock label="Drafts" value={data.drafts} change={null} previous="Stories you haven't published yet" href="/admin/posts?status=draft" linkLabel="View drafts" />
           )}
-        </Panel>
+          <div className="h-px bg-border" />
+          <StatBlock
+            label="Published"
+            value={data.published.total}
+            change={data.published.change}
+            previous={`From ${nf.format(data.published.previous)} in the period before`}
+            href="/admin/posts?status=published"
+            linkLabel="View detail"
+          />
+        </Card>
+
+        <Card title="Next Article Schedule" action={<CardLink href="/admin/posts?status=scheduled">View all</CardLink>}>
+          <NextScheduled post={data.nextScheduled} />
+        </Card>
+
+        <Card title="Your Top Articles" action={<CardLink href="/admin/posts?sort=views">View all</CardLink>}>
+          <TopArticles posts={data.top} />
+        </Card>
+
+        <Card title="Recently Updated" action={<CardLink href="/admin/posts">View all</CardLink>}>
+          <RecentlyUpdated posts={data.recent} />
+        </Card>
       </div>
     </div>
   )
