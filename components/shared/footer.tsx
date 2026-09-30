@@ -30,7 +30,7 @@ export async function Footer() {
           <FooterLink href="/search">Search</FooterLink>
         </FooterColumn>
 
-        <FooterColumn title="Sections" className="lg:col-span-2">
+        <FooterColumn title="Categories" className="lg:col-span-2">
           {categories.map((c) => (
             <FooterLink key={c.id} href={`/category/${c.slug}`}>
               {c.name}

@@ -31,7 +31,7 @@ const linkClass = (active: boolean) =>
 export function NavLinks({ categories }: { categories: Category[] }) {
   const isActive = useIsActive()
   const pathname = usePathname()
-  // Home (dropdown) · Latest · Trending · Sections (dropdown) · About · Contact
+  // Home (dropdown) · Latest · Trending · Categories (dropdown) · About · Contact
   const [, latest, trending, ...pages] = siteConfig.nav
 
   const renderLink = (item: (typeof siteConfig.nav)[number]) => (
@@ -51,7 +51,7 @@ export function NavLinks({ categories }: { categories: Category[] }) {
       {renderLink(latest)}
       {renderLink(trending)}
       <HoverMenu
-        label="Sections"
+        label="Categories"
         active={pathname.startsWith("/category")}
         items={categories.map((c) => ({ label: c.name, href: `/category/${c.slug}`, description: c.description }))}
       />
