@@ -34,7 +34,7 @@ export function MobileNav({ categories }: { categories: Category[] }) {
             <HeaderSearch onNavigate={close} />
           </Suspense>
           <nav aria-label="Mobile" className="flex flex-col gap-1">
-            {[...siteConfig.homeVersions, ...siteConfig.nav.slice(1)].map((item) => (
+            {siteConfig.nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

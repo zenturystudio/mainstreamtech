@@ -31,8 +31,8 @@ const linkClass = (active: boolean) =>
 export function NavLinks({ categories }: { categories: Category[] }) {
   const isActive = useIsActive()
   const pathname = usePathname()
-  // Home (dropdown) · Latest · Trending · Categories (dropdown) · About · Contact
-  const [, latest, trending, ...pages] = siteConfig.nav
+  // Home · Latest · Trending · Categories (dropdown) · About · Contact
+  const [home, latest, trending, ...pages] = siteConfig.nav
 
   const renderLink = (item: (typeof siteConfig.nav)[number]) => (
     <Link key={item.href} href={item.href} className={linkClass(isActive(item.href))} aria-current={isActive(item.href) ? "page" : undefined}>
@@ -42,12 +42,7 @@ export function NavLinks({ categories }: { categories: Category[] }) {
 
   return (
     <nav aria-label="Main" className="flex items-center gap-0.5">
-      <HoverMenu
-        label="Home"
-        active={siteConfig.homeVersions.some((h) => h.href === pathname)}
-        items={siteConfig.homeVersions}
-        width="w-64"
-      />
+      {renderLink(home)}
       {renderLink(latest)}
       {renderLink(trending)}
       <HoverMenu
