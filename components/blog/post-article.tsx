@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight, Clock, Eye, List } from "lucide-react"
+import { ChevronRight, Clock, List } from "lucide-react"
 import { AuthorBio } from "@/components/blog/author-bio"
 import { PostCard } from "@/components/blog/post-card"
 import { AuthorAvatar, CategoryBadge } from "@/components/blog/post-meta"
@@ -96,10 +96,6 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
                     <span aria-hidden>·</span>
                     <span className="inline-flex items-center gap-1">
                       <Clock className="size-3.5" aria-hidden /> {post.reading_time} min read
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span className="inline-flex items-center gap-1">
-                      <Eye className="size-3.5" aria-hidden /> {post.views.toLocaleString("en-GB")} views
                     </span>
                   </p>
                 </div>

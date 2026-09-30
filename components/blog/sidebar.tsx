@@ -42,8 +42,7 @@ export function PopularPosts({ posts }: { posts: PostSummary[] }) {
             </Link>
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            {post.views.toLocaleString("en-US")} views
-            {post.published_at && <> · {formatDate(post.published_at, "MMM d")}</>}
+            {post.published_at && formatDate(post.published_at, "MMM d")} · {post.reading_time} min read
           </p>
         </li>
       ))}

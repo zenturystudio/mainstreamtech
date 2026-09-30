@@ -4,8 +4,6 @@ import { ArrowRight, Flame } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import type { PostSummary } from "@/types/app"
 
-const compact = new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 })
-
 /** Homepage strip: the most-read recent stories. */
 export function TrendingSection({ posts }: { posts: PostSummary[] }) {
   if (!posts.length) return null
@@ -42,8 +40,7 @@ export function TrendingSection({ posts }: { posts: PostSummary[] }) {
                 </Link>
               </h3>
               <p className="text-xs text-muted-foreground">
-                {compact.format(post.views)} views
-                {post.published_at && <> · {formatDate(post.published_at, "d MMM")}</>}
+                {post.published_at && formatDate(post.published_at, "d MMM")} · {post.reading_time} min read
               </p>
             </div>
           </li>

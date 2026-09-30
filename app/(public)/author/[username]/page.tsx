@@ -31,8 +31,7 @@ export default async function AuthorPage({ params, searchParams }: Props) {
   const author = await getAuthorByUsername(username)
   if (!author) notFound()
 
-  const [result, all] = await Promise.all([getPosts({ author: username, page: Number(page) || 1 }), getPosts({ author: username, perPage: 1000 })])
-  const totalViews = all.items.reduce((n, p) => n + p.views, 0)
+  const result = await getPosts({ author: username, page: Number(page) || 1 })
 
   return (
     <Container>
@@ -47,10 +46,6 @@ export default async function AuthorPage({ params, searchParams }: Props) {
               <div>
                 <dt className="text-sm text-muted-foreground">Articles</dt>
                 <dd className="text-2xl font-semibold tabular-nums">{result.total}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">Total views</dt>
-                <dd className="text-2xl font-semibold tabular-nums">{totalViews.toLocaleString("en-US")}</dd>
               </div>
             </dl>
             <SocialLinks />
