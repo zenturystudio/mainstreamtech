@@ -10,7 +10,7 @@ export const contentType = "image/png"
 async function loadPlayfair(text: string): Promise<ArrayBuffer | null> {
   try {
     const css = await (await fetch(`https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&text=${encodeURIComponent(text)}`)).text()
-    const url = css.match(/src: url((.+?)) format('(?:opentype|truetype)')/)?.[1]
+    const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1]
     return url ? await (await fetch(url)).arrayBuffer() : null
   } catch {
     return null
@@ -36,7 +36,7 @@ export default async function OgImage({ params }: { params: Promise<{ slug: stri
             <span style={{ fontSize: 34, fontWeight: 700, letterSpacing: -1 }}>mainstream</span>
             <span style={{ fontSize: 30, fontFamily: "sans-serif", marginLeft: -6 }}>tech</span>
             {post?.category && (
-              <span style={{ marginLeft: 24, padding: "6px 16px", borderRadius: 999, background: "#2130ff", fontSize: 22, fontFamily: "sans-serif", fontWeight: 600 }}>
+              <span style={{ marginLeft: 24, padding: "6px 16px", borderRadius: 999, background: "#ffffff", color: "#141414", fontSize: 22, fontFamily: "sans-serif", fontWeight: 600 }}>
                 {post.category.name}
               </span>
             )}

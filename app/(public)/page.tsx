@@ -4,31 +4,31 @@ import { FeaturedHero } from "@/components/blog/featured-hero"
 import { TrendingSection } from "@/components/blog/trending-section"
 import { PostCard } from "@/components/blog/post-card"
 import { CategoryList, NewsletterCard, PopularPosts, SidebarSection, TagCloud } from "@/components/blog/sidebar"
+import { Button } from "@/components/ui/button"
 import { Container } from "@/components/shared/container"
-import { Pagination } from "@/components/shared/pagination"
 import { getCategories, getFeaturedPosts, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
 
 export const revalidate = 300
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { page: pageParam } = await searchParams
-  const page = Number(pageParam) || 1
+// One lead card + a 2×4 grid. The full, paginated list lives on /blog.
+const LATEST_COUNT = 9
 
+export default async function HomePage() {
   const [featured, trending, categories, popular, tags] = await Promise.all([
     getFeaturedPosts(4),
-    page === 1 ? getTrendingPosts(4) : Promise.resolve([]),
+    getTrendingPosts(4),
     getCategories(),
     getPopularPosts(5),
     getTags(),
   ])
   const [lead, ...picks] = featured
-  const latest = await getPosts({ page, exclude: page === 1 && lead ? [lead.id] : [] })
+  const latest = await getPosts({ perPage: LATEST_COUNT, exclude: lead ? [lead.id] : [] })
   const [first, ...rest] = latest.items
 
   return (
     <Container className="pt-8 sm:pt-12">
-      {page === 1 && lead && <FeaturedHero lead={lead} picks={picks} />}
-      {page === 1 && <TrendingSection posts={trending} />}
+      {lead && <FeaturedHero lead={lead} picks={picks} />}
+      <TrendingSection posts={trending} />
 
       <div className="mt-16 grid gap-12 sm:mt-20 lg:grid-cols-12 lg:gap-12">
         <section aria-labelledby="latest-heading" className="lg:col-span-8">
@@ -51,9 +51,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             ))}
           </div>
 
-          <div className="mt-14">
-            <Pagination page={latest.page} totalPages={latest.totalPages} basePath="/" />
-          </div>
+          {latest.total > latest.items.length && (
+            <div className="mt-14 flex justify-center">
+              <Button asChild variant="outline" size="lg" className="h-11 px-6">
+                <Link href="/blog">
+                  View all stories <ArrowRight />
+                </Link>
+              </Button>
+            </div>
+          )}
         </section>
 
         <aside className="flex flex-col gap-6 lg:col-span-4" aria-label="Sidebar">

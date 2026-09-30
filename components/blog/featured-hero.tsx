@@ -41,7 +41,8 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
               publishedAt={lead.published_at}
               readingTime={lead.reading_time}
               avatarSize={32}
-              className="text-white/75 [&_a]:text-white [&_a:hover]:text-white/80"
+              // First child is the byline: a link, or plain text for authorless posts.
+              className="text-white/75 [&>:first-child]:text-white [&_a:hover]:text-white/80"
             />
           </div>
         </div>

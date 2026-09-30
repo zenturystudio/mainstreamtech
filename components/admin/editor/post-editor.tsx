@@ -459,7 +459,7 @@ function GooglePreview({ url, title, description }: { url: string; title: string
     <div className="rounded-xl border bg-muted/30 p-4">
       <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">Search preview</p>
       <p className="truncate text-xs text-muted-foreground">{url}</p>
-      <p className="mt-0.5 line-clamp-1 text-lg leading-snug text-[#1a0dab] dark:text-[#8ab4f8]">{title}</p>
+      <p className="mt-0.5 line-clamp-1 text-lg leading-snug font-medium text-foreground">{title}</p>
       <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{description}</p>
     </div>
   )
