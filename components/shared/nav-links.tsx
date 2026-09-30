@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useId, useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
@@ -31,9 +31,8 @@ const linkClass = (active: boolean) =>
 export function NavLinks({ categories }: { categories: Category[] }) {
   const isActive = useIsActive()
   const pathname = usePathname()
-  // Categories dropdown sits after Trending, before About/Contact.
-  const primary = siteConfig.nav.slice(0, 3)
-  const secondary = siteConfig.nav.slice(3)
+  // Home (dropdown) · Latest · Trending · Sections (dropdown) · About · Contact
+  const [, latest, trending, ...pages] = siteConfig.nav
 
   const renderLink = (item: (typeof siteConfig.nav)[number]) => (
     <Link key={item.href} href={item.href} className={linkClass(isActive(item.href))} aria-current={isActive(item.href) ? "page" : undefined}>
@@ -43,17 +42,31 @@ export function NavLinks({ categories }: { categories: Category[] }) {
 
   return (
     <nav aria-label="Main" className="flex items-center gap-0.5">
-      {primary.map(renderLink)}
-      <SectionsMenu categories={categories} active={pathname.startsWith("/category")} />
-      {secondary.map(renderLink)}
+      <HoverMenu
+        label="Home"
+        active={siteConfig.homeVersions.some((h) => h.href === pathname)}
+        items={siteConfig.homeVersions}
+        width="w-64"
+      />
+      {renderLink(latest)}
+      {renderLink(trending)}
+      <HoverMenu
+        label="Sections"
+        active={pathname.startsWith("/category")}
+        items={categories.map((c) => ({ label: c.name, href: `/category/${c.slug}`, description: c.description }))}
+      />
+      {pages.map(renderLink)}
     </nav>
   )
 }
 
+type MenuItem = { label: string; href: string; description?: string | null }
+
 /** Opens on hover (desktop) and on click/Enter (touch, keyboard); Escape closes. */
-function SectionsMenu({ categories, active }: { categories: Category[]; active: boolean }) {
+function HoverMenu({ label, active, items, width = "w-80" }: { label: string; active: boolean; items: readonly MenuItem[]; width?: string }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const menuId = useId()
 
   return (
     <div
@@ -73,38 +86,35 @@ function SectionsMenu({ categories, active }: { categories: Category[]; active: 
       <button
         type="button"
         aria-expanded={open}
-        aria-controls="sections-menu"
+        aria-controls={menuId}
         onClick={() => setOpen((o) => !o)}
         className={cn(linkClass(active || open), "outline-none focus-visible:ring-3 focus-visible:ring-ring/50")}
       >
-        Sections <ChevronDown className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")} aria-hidden />
+        {label} <ChevronDown className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")} aria-hidden />
       </button>
 
       {/* pt-2 bridges the gap so the pointer can travel into the panel. */}
       <div
-        id="sections-menu"
+        id={menuId}
         className={cn(
           "absolute top-full left-0 z-50 pt-2 transition duration-150 ease-out",
           open ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-1 opacity-0"
         )}
       >
-        <ul className="w-80 rounded-2xl border bg-popover p-2 text-popover-foreground shadow-xl shadow-black/5">
-          {categories.map((c) => {
-            const href = `/category/${c.slug}`
-            return (
-              <li key={c.id}>
-                <Link
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  aria-current={pathname === href ? "page" : undefined}
-                  className="group/item block rounded-xl px-3 py-2.5 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none aria-[current=page]:bg-muted"
-                >
-                  <span className="block text-sm font-semibold group-hover/item:text-brand">{c.name}</span>
-                  {c.description && <span className="mt-0.5 line-clamp-1 block text-xs text-muted-foreground">{c.description}</span>}
-                </Link>
-              </li>
-            )
-          })}
+        <ul className={cn("rounded-2xl border bg-popover p-2 text-popover-foreground shadow-xl shadow-black/5", width)}>
+          {items.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={() => setOpen(false)}
+                aria-current={pathname === item.href ? "page" : undefined}
+                className="group/item block rounded-xl px-3 py-2.5 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none aria-[current=page]:bg-muted"
+              >
+                <span className="block text-sm font-semibold group-hover/item:text-brand">{item.label}</span>
+                {item.description && <span className="mt-0.5 line-clamp-1 block text-xs text-muted-foreground">{item.description}</span>}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
