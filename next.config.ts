@@ -4,6 +4,11 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
   : "*.supabase.co"
 
+// Optional image domain (e.g. https://cdn.mainstreamtech.co.uk) pointing at
+// this same Vercel project. Leave unset until that domain resolves, or every
+// image breaks. Unset = images load from the site's own domain.
+const imageCdn = process.env.NEXT_PUBLIC_IMAGE_CDN_URL?.replace(/\/+$/, "")
+
 const nextConfig: NextConfig = {
   // Lets the admin dev server (npm run dev:admin) build into its own folder
   // so it can run alongside the public dev server.
@@ -12,6 +17,7 @@ const nextConfig: NextConfig = {
   // images rewritten in lib/content.ts). Uploads have unique, timestamped
   // paths and never change, so optimised copies can be cached for a year.
   images: {
+    ...(imageCdn ? { path: `${imageCdn}/_next/image` } : {}),
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31_536_000,
     // Show images in the browser when opened in a new tab (Next defaults to

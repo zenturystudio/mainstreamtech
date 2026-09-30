@@ -25,7 +25,25 @@ function splitOriginRedirect(request: NextRequest): NextResponse | null {
   return null
 }
 
+/**
+ * The image CDN domain (NEXT_PUBLIC_IMAGE_CDN_URL) is an alias of this site,
+ * used only for /_next/image (which middleware never sees). Any page requested
+ * there is permanently redirected to the main site so content isn't duplicated.
+ */
+function imageDomainRedirect(request: NextRequest): NextResponse | null {
+  const cdn = process.env.NEXT_PUBLIC_IMAGE_CDN_URL
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (!cdn || !siteUrl) return null
+  // Use the Host header: request.nextUrl reports the server's own host.
+  if (request.headers.get("host") !== new URL(cdn).host) return null
+  const { pathname, search } = request.nextUrl
+  return NextResponse.redirect(new URL(pathname + search, siteUrl), 308)
+}
+
 export async function updateSession(request: NextRequest) {
+  const cdnRedirect = imageDomainRedirect(request)
+  if (cdnRedirect) return cdnRedirect
+
   const split = splitOriginRedirect(request)
   if (split) return split
 

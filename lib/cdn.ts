@@ -18,8 +18,11 @@ export function isCdnEligible(src: string): boolean {
   }
 }
 
+/** Same endpoint next/image uses: the image CDN domain when configured, else this site. */
+const IMAGE_ENDPOINT = `${process.env.NEXT_PUBLIC_IMAGE_CDN_URL?.replace(/\/+$/, "") ?? ""}/_next/image`
+
 export function cdnImageUrl(src: string, width: number, quality = 75): string {
-  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality}`
+  return `${IMAGE_ENDPOINT}?url=${encodeURIComponent(src)}&w=${width}&q=${quality}`
 }
 
 export function cdnSrcSet(src: string): string {
