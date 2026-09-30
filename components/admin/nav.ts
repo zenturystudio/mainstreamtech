@@ -1,6 +1,7 @@
 import {
   FilePlus2,
   FileText,
+  FileImage,
   FolderTree,
   Images,
   LayoutDashboard,
@@ -12,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-export type AdminNavItem = { label: string; href: string; icon: LucideIcon; adminOnly?: boolean; exact?: boolean }
+export type AdminNavItem = { label: string; href: string; icon: LucideIcon; adminOnly?: boolean; exact?: boolean; /** Indented under the item above. */ sub?: boolean }
 
 export const adminNav: { title?: string; items: AdminNavItem[] }[] = [
   {
@@ -25,7 +26,8 @@ export const adminNav: { title?: string; items: AdminNavItem[] }[] = [
       { label: "New post", href: "/admin/posts/new", icon: FilePlus2 },
       { label: "Categories", href: "/admin/categories", icon: FolderTree },
       { label: "Tags", href: "/admin/tags", icon: Tags },
-      { label: "Media", href: "/admin/media", icon: Images },
+      { label: "Media", href: "/admin/media", icon: Images, exact: true },
+      { label: "Blog media", href: "/admin/media/blog", icon: FileImage, sub: true },
     ],
   },
   {

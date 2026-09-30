@@ -5,7 +5,7 @@ import { useRef, useState } from "react"
 import { toast } from "sonner"
 import { ImagePlus, Loader2, RefreshCw, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { uploadImage } from "@/lib/storage"
+import { uploadImage, type MediaFolder } from "@/lib/storage"
 import { cn } from "@/lib/utils"
 
 type Props = {
@@ -16,10 +16,12 @@ type Props = {
   className?: string
   /** Round preview, for avatars. */
   round?: boolean
+  /** Storage folder for the upload (post images use "blog"). */
+  folder?: MediaFolder
 }
 
 /** Single-image field: drag & drop or click to upload to Supabase Storage, with preview and remove. */
-export function ImageUpload({ value, onChange, label = "Upload image", aspect = "aspect-[16/9]", className, round }: Props) {
+export function ImageUpload({ value, onChange, label = "Upload image", aspect = "aspect-[16/9]", className, round, folder = "general" }: Props) {
   const input = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [dragging, setDragging] = useState(false)
@@ -28,7 +30,7 @@ export function ImageUpload({ value, onChange, label = "Upload image", aspect = 
     if (!file) return
     setBusy(true)
     try {
-      const { url } = await uploadImage(file)
+      const { url } = await uploadImage(file, folder)
       onChange(url)
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Upload failed")

@@ -219,7 +219,7 @@ function ImageTool({ editor }: { editor: Editor }) {
     if (!file) return
     setBusy(true)
     try {
-      const { url } = await uploadImage(file)
+      const { url } = await uploadImage(file, "blog")
       const alt = window.prompt("Describe the image for screen readers (alt text):", "") ?? ""
       editor.chain().focus().setImage({ src: url, alt }).run()
     } catch (e) {

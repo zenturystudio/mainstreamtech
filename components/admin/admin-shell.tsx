@@ -160,7 +160,7 @@ function SidebarNav({ role, collapsed = false, onNavigate }: { role: ShellUser["
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "flex h-9 items-center gap-3 rounded-lg text-sm font-medium transition-colors",
-                      collapsed ? "justify-center" : "px-3",
+                      collapsed ? "justify-center" : item.sub ? "ml-4 border-l pl-4 text-[13px]" : "px-3",
                       active ? "bg-brand/10 text-brand" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >

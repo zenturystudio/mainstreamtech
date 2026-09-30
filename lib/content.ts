@@ -2,6 +2,7 @@ import "server-only"
 import DOMPurify from "isomorphic-dompurify"
 import { common, createLowlight } from "lowlight"
 import { toHtml } from "hast-util-to-html"
+import { cdnImageUrl, cdnSrcSet, isCdnEligible } from "@/lib/cdn"
 import { slugify } from "@/lib/utils"
 
 export type Heading = { id: string; text: string; level: 2 | 3 }
@@ -16,8 +17,9 @@ const decode = (s: string) =>
  * Prepares stored post HTML for rendering:
  * 1. sanitizes it (authors' HTML is untrusted),
  * 2. gives h2/h3 stable ids and collects them for the table of contents,
- * 3. syntax-highlights code blocks.
- * Steps 2–3 run on already-sanitized HTML and only emit escaped output.
+ * 3. syntax-highlights code blocks,
+ * 4. routes images through the image CDN with responsive sizes.
+ * Steps 2–4 run on already-sanitized HTML and only emit escaped output.
  */
 export function prepareContent(html: string): { html: string; headings: Heading[] } {
   const clean = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
@@ -50,5 +52,14 @@ export function prepareContent(html: string): { html: string; headings: Heading[
     }
   )
 
-  return { html: highlighted, headings }
+  // Article column is max 720px wide.
+  const withCdnImages = highlighted.replace(/<img\b([^>]*)>/g, (tag, attrs: string) => {
+    const src = decode(attrs.match(/\ssrc="([^"]*)"/)?.[1] ?? "")
+    if (!isCdnEligible(src)) return tag
+    const rest = attrs.replace(/\s(src|srcset|sizes|loading|decoding)="[^"]*"/g, "")
+    const esc = (v: string) => v.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+    return `<img src="${esc(cdnImageUrl(src, 1200))}" srcset="${esc(cdnSrcSet(src))}" sizes="(min-width: 768px) 720px, 100vw" loading="lazy" decoding="async"${rest}>`
+  })
+
+  return { html: withCdnImages, headings }
 }

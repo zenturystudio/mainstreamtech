@@ -368,7 +368,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
           </Section>
 
           <Section title="Cover image">
-            <Controller control={control} name="cover_image_url" render={({ field }) => <ImageUpload value={field.value} onChange={(url) => field.onChange(url)} label="Upload cover image" />} />
+            <Controller control={control} name="cover_image_url" render={({ field }) => <ImageUpload value={field.value} onChange={(url) => field.onChange(url)} label="Upload cover image" folder="blog" />} />
           </Section>
 
           <Section title="SEO" hint="Leave blank to use the title and excerpt.">

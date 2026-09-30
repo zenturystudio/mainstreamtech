@@ -10,13 +10,23 @@ import { AdminEmpty } from "@/components/admin/page-heading"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { deleteMedia } from "@/lib/actions/admin"
-import { uploadImage, validateImage } from "@/lib/storage"
+import { uploadImage, validateImage, type MediaFolder } from "@/lib/storage"
 import { cn, formatDate } from "@/lib/utils"
 import type { MediaItem } from "@/lib/queries/media"
 
 const formatSize = (bytes: number) => (bytes > 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`)
 
-export function MediaLibrary({ items, userId, isAdmin }: { items: MediaItem[]; userId: string; isAdmin: boolean }) {
+type Props = {
+  items: MediaItem[]
+  userId: string
+  isAdmin: boolean
+  /** Where new uploads go. */
+  folder: MediaFolder
+  /** Label each image Blog/General (the "All media" view). */
+  showFolder?: boolean
+}
+
+export function MediaLibrary({ items, userId, isAdmin, folder, showFolder }: Props) {
   const router = useRouter()
   const input = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
@@ -32,7 +42,7 @@ export function MediaLibrary({ items, userId, isAdmin }: { items: MediaItem[]; u
     if (!valid.length) return
 
     setUploading(valid.length)
-    const results = await Promise.allSettled(valid.map((f) => uploadImage(f)))
+    const results = await Promise.allSettled(valid.map((f) => uploadImage(f, folder)))
     setUploading(0)
     const ok = results.filter((r) => r.status === "fulfilled").length
     results.forEach((r) => r.status === "rejected" && toast.error(r.reason instanceof Error ? r.reason.message : "Upload failed"))
@@ -78,7 +88,7 @@ export function MediaLibrary({ items, userId, isAdmin }: { items: MediaItem[]; u
         <span className="grid size-12 place-items-center rounded-full bg-brand/10 text-brand">
           {uploading ? <Loader2 className="size-6 animate-spin" /> : <Upload className="size-6" aria-hidden />}
         </span>
-        <span className="font-medium">{uploading ? `Uploading ${uploading} ${uploading === 1 ? "image" : "images"}…` : "Drop images here or click to upload"}</span>
+        <span className="font-medium">{uploading ? `Uploading ${uploading} ${uploading === 1 ? "image" : "images"}…` : folder === "blog" ? "Drop blog images here or click to upload" : "Drop images here or click to upload"}</span>
         <span className="text-sm text-muted-foreground">JPG, PNG, WebP, GIF or AVIF · max 5 MB each</span>
       </button>
 
@@ -128,6 +138,16 @@ export function MediaLibrary({ items, userId, isAdmin }: { items: MediaItem[]; u
                     </div>
                   </div>
                   <div className="px-3 py-2">
+                    {showFolder && (
+                      <span
+                        className={cn(
+                          "mb-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                          item.folder === "blog" ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {item.folder === "blog" ? "Blog" : "General"}
+                      </span>
+                    )}
                     <p className="truncate text-sm font-medium" title={item.name}>
                       {item.name}
                     </p>
@@ -141,7 +161,8 @@ export function MediaLibrary({ items, userId, isAdmin }: { items: MediaItem[]; u
             })}
           </ul>
         ) : (
-          <AdminEmpty icon={ImageIcon} title={query ? "No matching files" : "No images yet"} description={query ? undefined : "Uploads from the editor and this page appear here."} />
+          <AdminEmpty icon={ImageIcon} title={query ? "No matching files" : folder === "blog" ? "No blog images yet" : "No images yet"}
+            description={query ? undefined : folder === "blog" ? "Images you upload here, plus covers and images added in the post editor, appear here." : "Uploads from the editor and this page appear here."} />
         )}
       </div>
     </div>

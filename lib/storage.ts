@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/client"
 
 export const IMAGE_BUCKET = "blog-images"
+/** Sub-folder (inside each user's folder) for images used in blog posts. */
+export const BLOG_FOLDER = "blog"
+export type MediaFolder = "blog" | "general"
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"]
 
@@ -12,9 +15,11 @@ export function validateImage(file: File): string | null {
 
 /**
  * Uploads straight from the browser to Supabase Storage. Storage RLS only
- * allows writes under the user's own folder: {user_id}/{timestamp}-{filename}.
+ * allows writes under the user's own folder:
+ *   general → {user_id}/{timestamp}-{filename}
+ *   blog    → {user_id}/blog/{timestamp}-{filename}
  */
-export async function uploadImage(file: File): Promise<{ url: string; path: string }> {
+export async function uploadImage(file: File, folder: MediaFolder = "general"): Promise<{ url: string; path: string }> {
   const problem = validateImage(file)
   if (problem) throw new Error(problem)
 
@@ -31,7 +36,8 @@ export async function uploadImage(file: File): Promise<{ url: string; path: stri
     .replace(/^-+|-+$/g, "")
     .slice(0, 60) || "image"
   const ext = dot > 0 ? file.name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "jpg"
-  const path = `${user.id}/${Date.now()}-${base}.${ext}`
+  const dir = folder === "blog" ? `${user.id}/${BLOG_FOLDER}` : user.id
+  const path = `${dir}/${Date.now()}-${base}.${ext}`
 
   const { error } = await supabase.storage.from(IMAGE_BUCKET).upload(path, file, { cacheControl: "31536000", contentType: file.type })
   if (error) throw new Error(error.message)
