@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
   },
   // jsdom (used by isomorphic-dompurify) must not be bundled.
   serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
+  // Stories moved from /blog/{slug} to /{slug}. Permanent (308) so search
+  // engines transfer ranking and old shared links keep working. /blog itself
+  // (the Latest page) is untouched because the pattern needs a slug.
+  async redirects() {
+    return [{ source: "/blog/:slug", destination: "/:slug", permanent: true }]
+  },
   experimental: {
     serverActions: { bodySizeLimit: "6mb" },
   },

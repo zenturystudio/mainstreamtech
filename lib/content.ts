@@ -1,8 +1,8 @@
 import "server-only"
-import DOMPurify from "isomorphic-dompurify"
 import { common, createLowlight } from "lowlight"
 import { toHtml } from "hast-util-to-html"
 import { cdnImageUrl, cdnSrcSet, isCdnEligible } from "@/lib/cdn"
+import { sanitizeStoryHtml } from "@/lib/sanitize"
 import { slugify } from "@/lib/utils"
 
 export type Heading = { id: string; text: string; level: 2 | 3 }
@@ -22,7 +22,7 @@ const decode = (s: string) =>
  * Steps 2–4 run on already-sanitized HTML and only emit escaped output.
  */
 export function prepareContent(html: string): { html: string; headings: Heading[] } {
-  const clean = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
+  const clean = sanitizeStoryHtml(html)
 
   const headings: Heading[] = []
   const used = new Map<string, number>()

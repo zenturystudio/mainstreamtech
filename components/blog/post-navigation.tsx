@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { PostSummary } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 export function PostNavigation({ previous, next }: { previous: PostSummary | null; next: PostSummary | null }) {
   if (!previous && !next) return null
@@ -18,7 +19,7 @@ function NavCard({ post, direction }: { post: PostSummary; direction: "previous"
   const isNext = direction === "next"
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={postPath(post.slug)}
       rel={isNext ? "next" : "prev"}
       className={cn("group flex flex-col gap-2 rounded-2xl border p-5 transition-colors hover:border-foreground/20 hover:bg-muted/40", isNext && "sm:items-end sm:text-right")}
     >

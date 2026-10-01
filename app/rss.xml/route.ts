@@ -1,5 +1,6 @@
 import { getPosts, getSiteSettings } from "@/lib/queries/public"
 import { absoluteUrl } from "@/lib/utils"
+import { postPath } from "@/lib/urls"
 
 export const revalidate = 900
 
@@ -10,7 +11,7 @@ export async function GET() {
 
   const entries = items
     .map((p) => {
-      const url = absoluteUrl(`/blog/${p.slug}`)
+      const url = absoluteUrl(postPath(p.slug))
       return `    <item>
       <title>${xml(p.title)}</title>
       <link>${url}</link>

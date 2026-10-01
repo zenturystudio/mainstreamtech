@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { PostArticle } from "@/components/blog/post-article"
 import { ViewTracker } from "@/components/blog/view-tracker"
 import { getAdjacentPosts, getAllPostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/queries/public"
+import { postPath } from "@/lib/urls"
 
 export const revalidate = 300
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/blog/${post.slug}` },
+    alternates: { canonical: postPath(post.slug) },
     openGraph: {
       type: "article",
       title,

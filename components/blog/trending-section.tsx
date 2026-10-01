@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowRight, Flame } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import type { PostSummary } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 /** Homepage strip: the most-read recent stories. */
 export function TrendingSection({ posts }: { posts: PostSummary[] }) {
@@ -35,7 +36,7 @@ export function TrendingSection({ posts }: { posts: PostSummary[] }) {
               )}
               {post.category && <p className="text-xs font-semibold text-brand">{post.category.name}</p>}
               <h3 className="line-clamp-3 leading-snug font-semibold">
-                <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-brand/40 group-hover:underline-offset-4">
+                <Link href={postPath(post.slug)} className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-brand/40 group-hover:underline-offset-4">
                   {post.title}
                 </Link>
               </h3>

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useId, useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { ArrowRight, ChevronDown, ChevronRight } from "lucide-react"
 import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types/app"
@@ -48,17 +48,18 @@ export function NavLinks({ categories }: { categories: Category[] }) {
       <HoverMenu
         label="Categories"
         active={pathname.startsWith("/category")}
-        items={categories.map((c) => ({ label: c.name, href: `/category/${c.slug}`, description: c.description }))}
+        items={categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }))}
+        footer={{ label: "All stories", href: "/blog" }}
       />
       {pages.map(renderLink)}
     </nav>
   )
 }
 
-type MenuItem = { label: string; href: string; description?: string | null }
+type MenuItem = { label: string; href: string }
 
 /** Opens on hover (desktop) and on click/Enter (touch, keyboard); Escape closes. */
-function HoverMenu({ label, active, items, width = "w-80" }: { label: string; active: boolean; items: readonly MenuItem[]; width?: string }) {
+function HoverMenu({ label, active, items, footer }: { label: string; active: boolean; items: readonly MenuItem[]; footer?: MenuItem }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const menuId = useId()
@@ -96,21 +97,34 @@ function HoverMenu({ label, active, items, width = "w-80" }: { label: string; ac
           open ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-1 opacity-0"
         )}
       >
-        <ul className={cn("rounded-2xl border bg-popover p-2 text-popover-foreground shadow-xl shadow-black/5", width)}>
-          {items.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                onClick={() => setOpen(false)}
-                aria-current={pathname === item.href ? "page" : undefined}
-                className="group/item block rounded-xl px-3 py-2.5 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none aria-[current=page]:bg-muted"
-              >
-                <span className="block text-sm font-semibold group-hover/item:text-brand">{item.label}</span>
-                {item.description && <span className="mt-0.5 line-clamp-1 block text-xs text-muted-foreground">{item.description}</span>}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="w-[22rem] rounded-2xl border bg-popover p-2 text-popover-foreground shadow-xl shadow-black/5">
+          <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">Browse by category</p>
+          <ul className="grid grid-cols-2 gap-0.5">
+            {items.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className="group/item flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:outline-none aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+                >
+                  {item.label}
+                  <ChevronRight className="size-3.5 -translate-x-1 opacity-0 transition duration-150 group-hover/item:translate-x-0 group-hover/item:opacity-60" aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {footer && (
+            <Link
+              href={footer.href}
+              onClick={() => setOpen(false)}
+              className="mt-2 flex items-center justify-between rounded-lg border-t px-3 pt-3 pb-2 text-sm font-semibold transition-colors hover:text-foreground/70 focus-visible:outline-none focus-visible:underline"
+            >
+              {footer.label}
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import Link from "next/link"
 import { CategoryBadge, PostMeta } from "@/components/blog/post-meta"
 import { cn, formatDate } from "@/lib/utils"
 import type { PostSummary } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 type Variant = "default" | "horizontal" | "compact"
 
@@ -24,7 +25,7 @@ export function PostCard({
   /** Use "h2" when the card sits directly under the page's h1 (keeps heading order valid). */
   headingAs?: "h2" | "h3"
 }) {
-  const href = `/blog/${post.slug}`
+  const href = postPath(post.slug)
 
   if (variant === "compact") {
     return (

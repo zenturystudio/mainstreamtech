@@ -18,3 +18,17 @@ export function safeNextPath(next: string | null | undefined, fallback = "/admin
   if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return fallback
   return next
 }
+
+/** Public path of a story. Stories live at the site root: /{slug}. */
+export function postPath(slug: string): string {
+  return `/${slug}`
+}
+
+/**
+ * First path segments used by other pages and files. A story can't use these
+ * as its slug, because the existing route would win and hide the story.
+ */
+export const RESERVED_SLUGS = [
+  "about", "admin", "api", "auth", "author", "blog", "category", "contact", "login", "preview", "search", "tag",
+  "rss.xml", "sitemap.xml", "robots.txt", "opengraph-image", "icon.png", "apple-icon.png", "favicon.ico",
+] as const

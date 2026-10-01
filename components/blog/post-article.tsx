@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, Clock, List } from "lucide-react"
 import { AuthorBio } from "@/components/blog/author-bio"
+import { FaqAccordion } from "@/components/blog/faq-accordion"
 import { PostCard } from "@/components/blog/post-card"
 import { AuthorAvatar, CategoryBadge } from "@/components/blog/post-meta"
 import { PostBody } from "@/components/blog/post-body"
@@ -15,6 +16,7 @@ import { prepareContent } from "@/lib/content"
 import { siteConfig } from "@/lib/site"
 import { absoluteUrl, formatDate } from "@/lib/utils"
 import type { Post, PostSummary } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 type Props = {
   post: Post
@@ -27,7 +29,7 @@ type Props = {
 /** Full article layout, shared by the public post page and the CMS preview. */
 export function PostArticle({ post, related, adjacent, preview }: Props) {
   const { html, headings } = prepareContent(post.content)
-  const url = absoluteUrl(`/blog/${post.slug}`)
+  const url = absoluteUrl(postPath(post.slug))
   const authorHref = post.author.username ? `/author/${post.author.username}` : null
 
   const jsonLd = {
@@ -37,7 +39,7 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
     description: post.excerpt,
     image: post.cover_image_url ? [post.cover_image_url] : undefined,
     datePublished: post.published_at,
-    author: authorHref
+    author: authorHref && post.author.id !== "staff"
       ? { "@type": "Person", name: post.author.full_name, url: absoluteUrl(authorHref) }
       : { "@type": "Organization", name: siteConfig.name },
     publisher: { "@type": "Organization", name: siteConfig.name, logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") } },
@@ -151,23 +153,12 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
               )}
 
               {post.faqs.length > 0 && (
-                <section aria-labelledby="faq-heading" className="mt-12 border-t pt-8">
-                  <h2 id="faq-heading" className="text-2xl font-bold tracking-tight">
+                <section aria-labelledby="faq-heading" className="mt-14">
+                  <p className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">FAQ</p>
+                  <h2 id="faq-heading" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
                     Frequently asked questions
                   </h2>
-                  <div className="mt-5 divide-y rounded-2xl border">
-                    {post.faqs.map((f, i) => (
-                      <details key={i} className="group px-5 py-4 open:bg-muted/30">
-                        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
-                          {f.question}
-                          <span aria-hidden className="mt-0.5 text-xl leading-none text-muted-foreground transition-transform group-open:rotate-45">
-                            +
-                          </span>
-                        </summary>
-                        <p className="mt-3 leading-relaxed whitespace-pre-line text-foreground/85">{f.answer}</p>
-                      </details>
-                    ))}
-                  </div>
+                  <FaqAccordion faqs={post.faqs} />
                 </section>
               )}
 

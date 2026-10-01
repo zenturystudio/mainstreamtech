@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit"
 import Image from "@tiptap/extension-image"
 import Placeholder from "@tiptap/extension-placeholder"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
+import Youtube from "@tiptap/extension-youtube"
 import { common, createLowlight } from "lowlight"
 import { toast } from "sonner"
 import {
@@ -27,6 +28,7 @@ import {
   Strikethrough,
   Underline,
   Undo2,
+  Video,
   Unlink,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -49,6 +51,8 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
         link: { openOnClick: false, autolink: true, defaultProtocol: "https", HTMLAttributes: { rel: "noopener noreferrer" } },
       }),
       CodeBlockLowlight.configure({ lowlight, defaultLanguage: "plaintext" }),
+      // Privacy-friendly embeds; the site sanitizer only allows YouTube iframes.
+      Youtube.configure({ nocookie: true, width: 640, height: 360, controls: true }),
       Image.configure({ HTMLAttributes: { loading: "lazy" } }),
       Placeholder.configure({ placeholder: "Start writing your story…" }),
     ],
@@ -116,6 +120,16 @@ function Toolbar({ editor }: { editor: Editor }) {
       <Divider />
       <LinkTool editor={editor} active={state.link} />
       <ImageTool editor={editor} />
+      <Tool
+        label="Embed YouTube video"
+        icon={Video}
+        onClick={() => {
+          const url = window.prompt("Paste a YouTube link:", "")?.trim()
+          if (!url) return
+          const ok = editor.chain().focus().setYoutubeVideo({ src: url }).run()
+          if (!ok) toast.error("That doesn't look like a YouTube link.")
+        }}
+      />
       <Tool label="Divider" onClick={() => chain().setHorizontalRule().run()} icon={Minus} />
       <div className="ml-auto flex items-center gap-0.5">
         <Tool label="Undo (Ctrl+Z)" disabled={!state.canUndo} onClick={() => chain().undo().run()} icon={Undo2} />

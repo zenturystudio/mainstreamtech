@@ -3,6 +3,7 @@ import { Mail } from "lucide-react"
 import { NewsletterForm } from "@/components/shared/newsletter-form"
 import { cn, formatDate } from "@/lib/utils"
 import type { Category, PostSummary, Tag, WithCount } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 export function SidebarSection({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
@@ -37,7 +38,7 @@ export function PopularPosts({ posts }: { posts: PostSummary[] }) {
       {posts.map((post) => (
         <li key={post.id} className="group relative">
           <h3 className="text-sm leading-snug font-semibold">
-            <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 group-hover:text-brand">
+            <Link href={postPath(post.slug)} className="after:absolute after:inset-0 group-hover:text-brand">
               {post.title}
             </Link>
           </h3>

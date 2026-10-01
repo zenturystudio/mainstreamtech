@@ -213,3 +213,18 @@
 .admin-ui :is(h1, h2, h3, h4) {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* ---- YouTube embeds in stories and the editor ---- */
+.prose div[data-youtube-video],
+.tiptap div[data-youtube-video] {
+  margin: 2em 0;
+}
+.prose div[data-youtube-video] iframe,
+.tiptap div[data-youtube-video] iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: var(--radius-xl);
+}

@@ -47,3 +47,6 @@ next-env.d.ts
 
 # Lighthouse CI local results
 /.lighthouseci/
+
+# Local backups (contain full post content)
+/backups/

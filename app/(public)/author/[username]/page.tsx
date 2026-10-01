@@ -50,7 +50,7 @@ export default async function AuthorPage({ params, searchParams }: Props) {
         </div>
       </header>
 
-      <h2 className="mt-12 text-2xl font-bold tracking-tight">Articles by {author.full_name?.split(" ")[0]}</h2>
+      <h2 className="mt-12 text-2xl font-bold tracking-tight">{author.id === "staff" ? `Articles from the ${author.title?.toLowerCase() ?? "newsroom"}` : `Articles by ${author.full_name?.split(" ")[0]}`}</h2>
       <div className="pt-8">
         {result.items.length ? <PostGrid posts={result.items} /> : <EmptyState title="No articles yet" />}
       </div>

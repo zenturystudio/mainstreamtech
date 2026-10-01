@@ -20,6 +20,7 @@ import { isSlugAvailable, savePost } from "@/lib/actions/posts"
 import type { PostStatus } from "@/lib/posts"
 import type { Faq } from "@/types/app"
 import { cn, readingTime, slugify, timeAgo } from "@/lib/utils"
+import { postPath } from "@/lib/urls"
 
 export type EditorPost = {
   id: string | null
@@ -198,7 +199,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
           : "Publish"
 
   const words = values.content ? values.content.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length : 0
-  const liveHref = `${siteBase}/blog/${savedSlug}`
+  const liveHref = `${siteBase}${postPath(savedSlug)}`
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="mx-auto max-w-7xl">
@@ -270,7 +271,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
               })}
             />
             <div className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-              <span className="shrink-0">{siteBase.replace(/^https?:\/\//, "")}/blog/</span>
+              <span className="shrink-0">{siteBase.replace(/^https?:\/\//, "")}/</span>
               <input
                 aria-label="Slug"
                 className="min-w-40 flex-1 rounded-md border border-transparent bg-transparent px-1.5 py-0.5 font-mono text-sm text-foreground hover:border-border focus:border-ring focus:outline-none"

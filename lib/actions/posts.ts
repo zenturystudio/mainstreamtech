@@ -1,9 +1,10 @@
 "use server"
 
-import DOMPurify from "isomorphic-dompurify"
 import { guardUser } from "@/lib/auth"
+import { sanitizeStoryHtml } from "@/lib/sanitize"
 import { dbError, firstIssue, revalidateSite } from "@/lib/actions/helpers"
 import { createClient } from "@/lib/supabase/server"
+import { RESERVED_SLUGS } from "@/lib/urls"
 import { readingTime } from "@/lib/utils"
 import { postSchema } from "@/lib/validations/cms"
 import type { ActionResult } from "@/types/app"
@@ -19,7 +20,7 @@ export async function savePost(id: string | null, input: unknown): Promise<SaveR
 
   const { tag_ids, ...fields } = parsed.data
   // Editor HTML is untrusted: sanitize on write as well as on render.
-  const content = DOMPurify.sanitize(fields.content, { USE_PROFILES: { html: true } })
+  const content = sanitizeStoryHtml(fields.content)
   const supabase = await createClient()
 
   const requested = fields.published_at ?? null
@@ -56,6 +57,7 @@ export async function savePost(id: string | null, input: unknown): Promise<SaveR
 export async function isSlugAvailable(slug: string, excludeId: string | null): Promise<boolean> {
   const guard = await guardUser()
   if (!guard.ok || !slug) return false
+  if ((RESERVED_SLUGS as readonly string[]).includes(slug)) return false
   const supabase = await createClient()
   // RLS hides other authors' drafts, so authors may get a false "available";
   // the unique constraint still catches it on save.

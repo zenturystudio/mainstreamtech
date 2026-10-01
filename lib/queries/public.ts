@@ -18,14 +18,19 @@ const TAGS = "post_tags(tag:tags(id, name, slug))"
 const SUMMARY_COLUMNS = `id, title, slug, excerpt, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, ${AUTHOR}, ${CATEGORY}, ${TAGS}`
 const POST_COLUMNS = `${SUMMARY_COLUMNS}, content, faqs`
 
-/** Byline used when a post's author account no longer exists. */
+/**
+ * Byline for posts with no author account (imported stories, or a deleted
+ * writer). It has its own page at /author/mainstream-tech listing those posts.
+ */
+export const STAFF_USERNAME = "mainstream-tech"
 export const STAFF_AUTHOR: Author = {
   id: "staff",
   full_name: siteConfig.name,
-  username: null,
+  username: STAFF_USERNAME,
   avatar_url: null,
-  bio: null,
+  bio: siteConfig.description,
   role: "author",
+  title: "Newsroom",
 }
 
 type Row = {
@@ -119,7 +124,7 @@ export async function getPosts(filter: PostFilter = {}): Promise<Paginated<PostS
   if (filter.author) {
     const author = await getAuthorByUsername(filter.author)
     if (!author) return EMPTY
-    query = query.eq("author_id", author.id)
+    query = author.id === STAFF_AUTHOR.id ? query.is("author_id", null) : query.eq("author_id", author.id)
   }
   if (filter.tag) {
     const tag = await getTagBySlug(filter.tag)
@@ -270,6 +275,7 @@ export async function getAuthors(): Promise<WithCount<Author>[]> {
 }
 
 export const getAuthorByUsername = cache(async (username: string): Promise<Author | null> => {
+  if (username === STAFF_USERNAME) return STAFF_AUTHOR
   const { data } = await db().from("profiles").select("id, full_name, username, avatar_url, bio, role").eq("username", username).maybeSingle()
   return data
 })

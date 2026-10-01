@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react"
 import { PostCard } from "@/components/blog/post-card"
 import { CategoryBadge, PostMeta } from "@/components/blog/post-meta"
 import type { PostSummary } from "@/types/app"
+import { postPath } from "@/lib/urls"
 
 export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSummary[] }) {
   return (
@@ -31,7 +32,7 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
               {lead.category && <CategoryBadge category={lead.category} className="bg-white/15 text-white backdrop-blur hover:bg-white hover:text-black" />}
             </div>
             <h3 className="max-w-3xl text-2xl leading-tight font-bold tracking-tight sm:text-4xl lg:text-[2.75rem]">
-              <Link href={`/blog/${lead.slug}`} className="after:absolute after:inset-0">
+              <Link href={postPath(lead.slug)} className="after:absolute after:inset-0">
                 {lead.title}
               </Link>
             </h3>

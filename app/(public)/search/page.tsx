@@ -9,6 +9,7 @@ import { Container } from "@/components/shared/container"
 import { Pagination } from "@/components/shared/pagination"
 import { getTags, searchPosts } from "@/lib/queries/public"
 import { formatDate } from "@/lib/utils"
+import { postPath } from "@/lib/urls"
 
 type Props = { searchParams: Promise<{ q?: string; page?: string }> }
 
@@ -84,7 +85,7 @@ export default async function SearchPage({ searchParams }: Props) {
                   </div>
                   <h2 className="mt-3 text-xl font-semibold tracking-tight [&_mark]:rounded [&_mark]:bg-brand/15 [&_mark]:px-0.5 [&_mark]:text-foreground">
                     <Link
-                      href={`/blog/${post.slug}`}
+                      href={postPath(post.slug)}
                       className="after:absolute after:inset-0 group-hover:underline group-hover:underline-offset-4"
                       // titleHtml is escaped text plus <mark> tags (see searchPosts).
                       dangerouslySetInnerHTML={{ __html: post.titleHtml }}

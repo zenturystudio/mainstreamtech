@@ -16,6 +16,7 @@ import { deletePosts, duplicatePost } from "@/lib/actions/posts"
 import { effectiveStatus, type PostStatus } from "@/lib/posts"
 import { formatDate, timeAgo } from "@/lib/utils"
 import type { AdminPostRow } from "@/lib/queries/admin"
+import { postPath } from "@/lib/urls"
 
 export function PostsTable({ posts, siteBase, showAuthor, filtered }: { posts: AdminPostRow[]; siteBase: string; showAuthor: boolean; filtered: boolean }) {
   const router = useRouter()
@@ -180,7 +181,7 @@ function RowActions({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href={live ? `${siteBase}/blog/${post.slug}` : `/preview/${post.id}`} target="_blank" rel="noopener noreferrer">
+            <a href={live ? `${siteBase}${postPath(post.slug)}` : `/preview/${post.id}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink /> {live ? "View" : "Preview"}
             </a>
           </DropdownMenuItem>
