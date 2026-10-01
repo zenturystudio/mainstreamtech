@@ -2,10 +2,10 @@
   "ci": {
     "collect": {
       "url": [
-        "https://mainstreamtech.vercel.app/",
-        "https://mainstreamtech.vercel.app/blog",
-        "https://mainstreamtech.vercel.app/blog/global-supply-chains-redrawn",
-        "https://mainstreamtech.vercel.app/category/business"
+        "https://www.mainstreamtech.co.uk/",
+        "https://www.mainstreamtech.co.uk/blog",
+        "https://www.mainstreamtech.co.uk/what-is-generative-ai",
+        "https://www.mainstreamtech.co.uk/category/technology"
       ],
       "numberOfRuns": 3
     },

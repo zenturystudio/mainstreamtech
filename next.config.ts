@@ -36,7 +36,17 @@ const nextConfig: NextConfig = {
   // engines transfer ranking and old shared links keep working. /blog itself
   // (the Latest page) is untouched because the pattern needs a slug.
   async redirects() {
-    return [{ source: "/blog/:slug", destination: "/:slug", permanent: true }]
+    return [
+      { source: "/blog/:slug", destination: "/:slug", permanent: true },
+      // Old WordPress addresses on this domain (old story links /slug/ already
+      // work: the trailing slash is redirected away).
+      { source: "/feed", destination: "/rss.xml", permanent: true },
+      { source: "/feed/:rest*", destination: "/rss.xml", permanent: true },
+      // Yoast sitemaps that Google already knows about.
+      { source: "/:name(sitemap_index|post-sitemap|page-sitemap|category-sitemap|post_tag-sitemap|author-sitemap).xml", destination: "/sitemap.xml", permanent: true },
+      // WordPress author pages, until these writers get their own profiles here.
+      { source: "/author/:wp(kristen-elad|secure-login)", destination: "/author/mainstream-tech", permanent: false },
+    ]
   },
   experimental: {
     serverActions: { bodySizeLimit: "6mb" },

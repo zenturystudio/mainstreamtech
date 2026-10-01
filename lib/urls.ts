@@ -29,6 +29,6 @@ export function postPath(slug: string): string {
  * as its slug, because the existing route would win and hide the story.
  */
 export const RESERVED_SLUGS = [
-  "about", "admin", "api", "auth", "author", "blog", "category", "contact", "login", "preview", "search", "tag",
+  "about", "admin", "api", "feed", "auth", "author", "blog", "category", "contact", "login", "preview", "search", "tag",
   "rss.xml", "sitemap.xml", "robots.txt", "opengraph-image", "icon.png", "apple-icon.png", "favicon.ico",
 ] as const

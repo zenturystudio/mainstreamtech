@@ -1,6 +1,6 @@
 /**
  * Origin of the optional image CDN domain from NEXT_PUBLIC_IMAGE_CDN_URL,
- * e.g. "https://mainstreamtech-cdn.vercel.app". Tolerates stray spaces,
+ * e.g. "https://cdn.mainstreamtech.co.uk". Tolerates stray spaces,
  * trailing commas/slashes and paths; returns null (images stay on the site's
  * own domain) if the value isn't a usable http(s) URL, so a typo in the
  * setting can never break every image.
