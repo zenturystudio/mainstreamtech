@@ -14,7 +14,7 @@ export function AuthorAvatar({ author, size = 28, className }: { author: Author;
 
   return (
     <span
-      className={cn("relative inline-grid shrink-0 place-items-center overflow-hidden rounded-full bg-muted text-xs font-medium", className)}
+      className={cn("relative inline-grid shrink-0 place-items-center overflow-hidden rounded-full bg-muted text-xs font-medium text-foreground", className)}
       style={{ width: size, height: size }}
     >
       {author.avatar_url ? (

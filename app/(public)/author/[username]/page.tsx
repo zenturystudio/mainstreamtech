@@ -6,15 +6,12 @@ import { AuthorAvatar } from "@/components/blog/post-meta"
 import { Container } from "@/components/shared/container"
 import { Pagination } from "@/components/shared/pagination"
 import { SocialLinks } from "@/components/shared/social-links"
-import { getAuthorByUsername, getAuthors, getPosts } from "@/lib/queries/public"
+import { getAuthorByUsername, getPosts } from "@/lib/queries/public"
 
-export const revalidate = 300
+// Rendered per request: it reads ?page=, which a pre-built (static) page can't.
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ username: string }>; searchParams: Promise<{ page?: string }> }
-
-export async function generateStaticParams() {
-  return (await getAuthors()).map((a) => ({ username: a.username! }))
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const author = await getAuthorByUsername((await params).username)

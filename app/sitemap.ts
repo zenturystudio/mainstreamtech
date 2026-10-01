@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next"
-import { getAllPostSlugs, getCategories, getTags } from "@/lib/queries/public"
+import { getAllPostSlugs, getAuthors, getCategories, getTags } from "@/lib/queries/public"
 import { absoluteUrl } from "@/lib/utils"
 
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, categories, tags] = await Promise.all([getAllPostSlugs(), getCategories(), getTags()])
+  const [posts, categories, tags, authors] = await Promise.all([getAllPostSlugs(), getCategories(), getTags(), getAuthors()])
   const latest = posts[0]?.published_at ? new Date(posts[0].published_at) : new Date()
 
   return [
@@ -21,5 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...categories.filter((c) => c.postCount > 0).map((c) => ({ url: absoluteUrl(`/category/${c.slug}`), changeFrequency: "daily" as const, priority: 0.6 })),
     ...tags.map((t) => ({ url: absoluteUrl(`/tag/${t.slug}`), changeFrequency: "weekly" as const, priority: 0.4 })),
+    // getAuthors only returns people with published stories.
+    ...authors.filter((a) => a.username).map((a) => ({ url: absoluteUrl(`/author/${a.username}`), changeFrequency: "weekly" as const, priority: 0.4 })),
   ]
 }

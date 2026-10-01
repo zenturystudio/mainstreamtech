@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:types": "node scripts/gen-types.mjs",
     "dev:admin": "cross-env ADMIN_MODE=1 NEXT_DIST_DIR=.next-admin next dev --turbopack -p 3002",
-    "seed:content": "node scripts/seed-content.mts"
+    "seed:content": "node scripts/seed-content.mts",
+    "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

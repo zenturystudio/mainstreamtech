@@ -7,13 +7,10 @@ import { Container } from "@/components/shared/container"
 import { Pagination } from "@/components/shared/pagination"
 import { getPosts, getTagBySlug, getTags } from "@/lib/queries/public"
 
-export const revalidate = 300
+// Rendered per request: it reads ?page=, which a pre-built (static) page can't.
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?: string }> }
-
-export async function generateStaticParams() {
-  return (await getTags()).map((t) => ({ slug: t.slug }))
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const tag = await getTagBySlug((await params).slug)
@@ -51,7 +48,7 @@ export default async function TagPage({ params, searchParams }: Props) {
 
       <div className="pt-12">
         {result.items.length ? (
-          <PostGrid posts={result.items} />
+          <PostGrid posts={result.items} headingAs="h2" />
         ) : (
           <EmptyState title="No articles with this tag" description="Try one of the other topics above." />
         )}

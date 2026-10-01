@@ -69,7 +69,7 @@ export async function getPostForEdit(session: Session, id: string) {
   const { data, error } = await supabase
     .from("posts")
     .select(
-      "id, title, slug, excerpt, content, cover_image_url, status, published_at, author_id, category_id, featured, views, reading_time, meta_title, meta_description, created_at, updated_at, post_tags(tag_id)"
+      "id, title, slug, excerpt, content, cover_image_url, status, published_at, author_id, category_id, featured, views, reading_time, meta_title, meta_description, faqs, created_at, updated_at, post_tags(tag_id)"
     )
     .eq("id", id)
     .maybeSingle()

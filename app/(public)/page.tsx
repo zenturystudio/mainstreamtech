@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { FeaturedHero } from "@/components/blog/featured-hero"
@@ -7,8 +8,41 @@ import { CategoryList, NewsletterCard, PopularPosts, SidebarSection, TagCloud } 
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/shared/container"
 import { getCategories, getFeaturedPosts, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
+import { siteConfig } from "@/lib/site"
+import { absoluteUrl } from "@/lib/utils"
 
 export const revalidate = 300
+
+export const metadata: Metadata = { alternates: { canonical: "/" } }
+
+// Site-level structured data: WebSite (with sitelinks search box) + Organization.
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": absoluteUrl("/#website"),
+      url: absoluteUrl("/"),
+      name: siteConfig.name,
+      description: siteConfig.description,
+      inLanguage: "en-GB",
+      publisher: { "@id": absoluteUrl("/#organization") },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl("/search")}?q={search_term_string}` },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "NewsMediaOrganization",
+      "@id": absoluteUrl("/#organization"),
+      name: siteConfig.name,
+      url: absoluteUrl("/"),
+      logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") },
+      email: siteConfig.email,
+    },
+  ],
+}
 
 // One lead card + a 2×4 grid. The full, paginated list lives on /blog.
 const LATEST_COUNT = 9
@@ -27,6 +61,11 @@ export default async function HomePage() {
 
   return (
     <Container className="pt-8 sm:pt-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd).replace(/</g, "\\u003c") }} />
+      {/* One h1 per page for search engines and screen readers; the design leads with the hero instead. */}
+      <h1 className="sr-only">
+        {siteConfig.name}: {siteConfig.tagline}
+      </h1>
       {lead && <FeaturedHero lead={lead} picks={picks} />}
       <TrendingSection posts={trending} />
 

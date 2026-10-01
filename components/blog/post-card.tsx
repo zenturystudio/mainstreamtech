@@ -10,7 +10,20 @@ type Variant = "default" | "horizontal" | "compact"
  * The title link stretches over the whole card (after:inset-0) so the card is
  * one click target, while category and author links sit above it with z-10.
  */
-export function PostCard({ post, variant = "default", priority, className }: { post: PostSummary; variant?: Variant; priority?: boolean; className?: string }) {
+export function PostCard({
+  post,
+  variant = "default",
+  priority,
+  className,
+  headingAs: Heading = "h3",
+}: {
+  post: PostSummary
+  variant?: Variant
+  priority?: boolean
+  className?: string
+  /** Use "h2" when the card sits directly under the page's h1 (keeps heading order valid). */
+  headingAs?: "h2" | "h3"
+}) {
   const href = `/blog/${post.slug}`
 
   if (variant === "compact") {
@@ -55,11 +68,11 @@ export function PostCard({ post, variant = "default", priority, className }: { p
       </div>
       <div className="flex flex-col gap-3">
         {post.category && <CategoryBadge category={post.category} />}
-        <h3 className={cn("leading-tight font-semibold tracking-tight", horizontal ? "text-2xl" : "text-xl")}>
+        <Heading className={cn("leading-tight font-semibold tracking-tight", horizontal ? "text-2xl" : "text-xl")}>
           <Link href={href} className="decoration-brand/40 decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline">
             {post.title}
           </Link>
-        </h3>
+        </Heading>
         {post.excerpt && <p className={cn("text-muted-foreground", horizontal ? "line-clamp-3" : "line-clamp-2")}>{post.excerpt}</p>}
         <PostMeta author={post.author} publishedAt={post.published_at} readingTime={post.reading_time} className="mt-1" />
       </div>
@@ -67,11 +80,11 @@ export function PostCard({ post, variant = "default", priority, className }: { p
   )
 }
 
-export function PostGrid({ posts, className }: { posts: PostSummary[]; className?: string }) {
+export function PostGrid({ posts, className, headingAs }: { posts: PostSummary[]; className?: string; headingAs?: "h2" | "h3" }) {
   return (
     <div className={cn("grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3", className)}>
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} headingAs={headingAs} />
       ))}
     </div>
   )

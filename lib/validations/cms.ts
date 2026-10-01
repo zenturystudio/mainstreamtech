@@ -42,6 +42,16 @@ export const postSchema = z
     featured: z.boolean().default(false),
     meta_title: optionalText(70),
     meta_description: optionalText(170),
+    // Plain-text Q&A pairs, rendered at the end of the story and as FAQPage schema.
+    faqs: z
+      .array(
+        z.object({
+          question: z.string().trim().min(1, "Each FAQ needs a question").max(200, "FAQ questions are limited to 200 characters"),
+          answer: z.string().trim().min(1, "Each FAQ needs an answer").max(2000, "FAQ answers are limited to 2,000 characters"),
+        })
+      )
+      .max(20, "Up to 20 FAQs per story")
+      .default([]),
   })
   .superRefine((v, ctx) => {
     if (v.status === "scheduled") {

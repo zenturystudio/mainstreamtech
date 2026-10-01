@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { signOut } from "@/lib/actions/auth"
 import type { Notifications } from "@/lib/queries/admin"
 import { cn } from "@/lib/utils"
@@ -39,97 +40,100 @@ export function AdminShell({
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
+    // TooltipProvider: required by tooltips inside admin pages (e.g. the editor toolbar).
     // admin-ui: CMS headings use the sans font (see globals.css).
-    <div className="admin-ui flex min-h-svh bg-muted/50 dark:bg-background">
-      <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col border-r bg-background lg:flex">
-        <div className="flex h-16 items-center px-5">
-          <Logo className="[&_img]:h-5" />
-        </div>
-        <div className="px-4 pt-2 pb-4">
-          <CreateButton />
-        </div>
-        <SidebarNav role={user.role} />
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-md sm:px-6">
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation">
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-72 gap-0 overflow-y-auto p-0">
-              <SheetHeader className="border-b">
-                <SheetTitle>
-                  <Logo className="[&_img]:h-5" />
-                </SheetTitle>
-              </SheetHeader>
-              <div className="px-4 pt-4 pb-4">
-                <CreateButton onNavigate={() => setMobileOpen(false)} />
-              </div>
-              <SidebarNav role={user.role} onNavigate={() => setMobileOpen(false)} />
-            </SheetContent>
-          </Sheet>
-
-          <form action="/admin/posts" role="search" className="relative hidden w-full max-w-sm sm:block">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-            <input
-              type="search"
-              name="q"
-              placeholder="Search anything…"
-              aria-label="Search posts"
-              className="h-10 w-full rounded-xl border-0 bg-muted/70 pr-4 pl-9 text-sm outline-none placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-ring/40"
-            />
-          </form>
-
-          <div className="ml-auto flex items-center gap-1.5">
-            <Button asChild variant="outline" className="hidden h-9 rounded-xl sm:inline-flex">
-              <a href={siteHref} target="_blank" rel="noopener noreferrer">
-                <Globe /> Visit Site
-              </a>
-            </Button>
-            <ThemeToggle />
-            <NotificationsBell notifications={notifications} />
-            <DropdownMenu>
-              <DropdownMenuTrigger className="ml-1 flex items-center gap-2.5 rounded-full py-1 pr-2 pl-1 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50">
-                <UserAvatar name={user.name} src={user.avatarUrl} size={34} />
-                <span className="hidden text-sm font-semibold sm:block">{user.name}</span>
-                <ChevronDown className="hidden size-4 text-muted-foreground sm:block" aria-hidden />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
-                <DropdownMenuLabel className="font-normal">
-                  <p className="truncate font-medium">{user.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-                  <p className="mt-1.5 inline-flex rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold capitalize">{user.role}</p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/admin/profile">
-                    <UserCircle /> Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={siteHref} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink /> View site
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <form action={signOut}>
-                  <DropdownMenuItem asChild variant="destructive">
-                    <button type="submit" className="w-full">
-                      <LogOut /> Sign out
-                    </button>
-                  </DropdownMenuItem>
-                </form>
-              </DropdownMenuContent>
-            </DropdownMenu>
+    <TooltipProvider delayDuration={200}>
+      <div className="admin-ui flex min-h-svh bg-muted/50 dark:bg-background">
+        <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col border-r bg-background lg:flex">
+          <div className="flex h-16 items-center px-5">
+            <Logo className="[&_img]:h-5" />
           </div>
-        </header>
+          <div className="px-4 pt-2 pb-4">
+            <CreateButton />
+          </div>
+          <SidebarNav role={user.role} />
+        </aside>
 
-        <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-md sm:px-6">
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 gap-0 overflow-y-auto p-0">
+                <SheetHeader className="border-b">
+                  <SheetTitle>
+                    <Logo className="[&_img]:h-5" />
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="px-4 pt-4 pb-4">
+                  <CreateButton onNavigate={() => setMobileOpen(false)} />
+                </div>
+                <SidebarNav role={user.role} onNavigate={() => setMobileOpen(false)} />
+              </SheetContent>
+            </Sheet>
+
+            <form action="/admin/posts" role="search" className="relative hidden w-full max-w-sm sm:block">
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+              <input
+                type="search"
+                name="q"
+                placeholder="Search anything…"
+                aria-label="Search posts"
+                className="h-10 w-full rounded-xl border-0 bg-muted/70 pr-4 pl-9 text-sm outline-none placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-ring/40"
+              />
+            </form>
+
+            <div className="ml-auto flex items-center gap-1.5">
+              <Button asChild variant="outline" className="hidden h-9 rounded-xl sm:inline-flex">
+                <a href={siteHref} target="_blank" rel="noopener noreferrer">
+                  <Globe /> Visit Site
+                </a>
+              </Button>
+              <ThemeToggle />
+              <NotificationsBell notifications={notifications} />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="ml-1 flex items-center gap-2.5 rounded-full py-1 pr-2 pl-1 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50">
+                  <UserAvatar name={user.name} src={user.avatarUrl} size={34} />
+                  <span className="hidden text-sm font-semibold sm:block">{user.name}</span>
+                  <ChevronDown className="hidden size-4 text-muted-foreground sm:block" aria-hidden />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-60">
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="truncate font-medium">{user.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                    <p className="mt-1.5 inline-flex rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold capitalize">{user.role}</p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/profile">
+                      <UserCircle /> Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href={siteHref} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink /> View site
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <form action={signOut}>
+                    <DropdownMenuItem asChild variant="destructive">
+                      <button type="submit" className="w-full">
+                        <LogOut /> Sign out
+                      </button>
+                    </DropdownMenuItem>
+                  </form>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </header>
+
+          <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }
 

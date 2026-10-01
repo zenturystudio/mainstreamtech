@@ -44,3 +44,6 @@ next-env.d.ts
 
 # second dev server (admin on :3002)
 /.next-admin/
+
+# Lighthouse CI local results
+/.lighthouseci/

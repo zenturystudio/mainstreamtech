@@ -35,7 +35,7 @@ export default async function BlogPage({ searchParams }: Props) {
       </PageHeader>
 
       <div className="pt-12">
-        {result.items.length ? <PostGrid posts={result.items} /> : <EmptyState title="No articles yet" description="Check back soon." />}
+        {result.items.length ? <PostGrid posts={result.items} headingAs="h2" /> : <EmptyState title="No articles yet" description="Check back soon." />}
       </div>
 
       <div className="mt-16">

@@ -33,7 +33,7 @@ export function Pagination({ page, totalPages, basePath, params = {} }: Props) {
   return (
     <nav aria-label="Pagination" className="flex items-center justify-center gap-1">
       {page > 1 ? (
-        <Link href={href(page - 1)} className={cn(item, "gap-1 hover:bg-muted")} rel="prev">
+        <Link href={href(page - 1)} className={cn(item, "gap-1 hover:bg-muted")} rel="prev" aria-label="Previous page">
           <span className="flex items-center gap-1">
             <ChevronLeft className="size-4" aria-hidden /> <span className="hidden sm:inline">Previous</span>
           </span>
@@ -63,7 +63,7 @@ export function Pagination({ page, totalPages, basePath, params = {} }: Props) {
       )}
 
       {page < totalPages ? (
-        <Link href={href(page + 1)} className={cn(item, "hover:bg-muted")} rel="next">
+        <Link href={href(page + 1)} className={cn(item, "hover:bg-muted")} rel="next" aria-label="Next page">
           <span className="flex items-center gap-1">
             <span className="hidden sm:inline">Next</span> <ChevronRight className="size-4" aria-hidden />
           </span>

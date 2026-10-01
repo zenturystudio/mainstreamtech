@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { PostEditor } from "@/components/admin/editor/post-editor"
 import { requireUser } from "@/lib/auth"
 import type { PostStatus } from "@/lib/posts"
+import { parseFaqs } from "@/lib/faqs"
 import { getPostForEdit } from "@/lib/queries/admin"
 import { getTaxonomyOptions } from "@/lib/queries/taxonomy"
 import { siteOrigin } from "@/lib/urls"
@@ -38,6 +39,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
         featured: post.featured,
         meta_title: post.meta_title ?? "",
         meta_description: post.meta_description ?? "",
+        faqs: parseFaqs(post.faqs),
         updated_at: post.updated_at,
       }}
     />

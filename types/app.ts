@@ -7,14 +7,17 @@ export type Author = Pick<Tables<"profiles">, "id" | "full_name" | "username" | 
 export type Category = Pick<Tables<"categories">, "id" | "name" | "slug" | "description">
 export type Tag = Pick<Tables<"tags">, "id" | "name" | "slug">
 
-export type Post = Omit<Tables<"posts">, "search_vector" | "author_id" | "category_id" | "created_at" | "updated_at"> & {
+export type Faq = { question: string; answer: string }
+
+export type Post = Omit<Tables<"posts">, "search_vector" | "author_id" | "category_id" | "created_at" | "updated_at" | "faqs"> & {
+  faqs: Faq[]
   author: Author
   category: Category | null
   tags: Tag[]
 }
 
 /** Post fields needed by cards and lists (no body). */
-export type PostSummary = Omit<Post, "content">
+export type PostSummary = Omit<Post, "content" | "faqs">
 
 export type WithCount<T> = T & { postCount: number }
 

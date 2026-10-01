@@ -44,6 +44,19 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
     mainEntityOfPage: url,
   }
 
+  // FAQPage schema, only when the story has FAQs (Google's FAQ rich results).
+  const faqJsonLd = post.faqs.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: post.faqs.map((f) => ({
+          "@type": "Question",
+          name: f.question,
+          acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
+      }
+    : null
+
   return (
     <>
       <ReadingProgress targetId="article-body" />
@@ -53,6 +66,9 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
           // "<" is escaped so post text can never close the script tag.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
+      )}
+      {!preview && faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }} />
       )}
 
       <article>
@@ -132,6 +148,27 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
                   <span className="text-sm font-medium text-muted-foreground">Tagged</span>
                   <TagCloud tags={post.tags} />
                 </div>
+              )}
+
+              {post.faqs.length > 0 && (
+                <section aria-labelledby="faq-heading" className="mt-12 border-t pt-8">
+                  <h2 id="faq-heading" className="text-2xl font-bold tracking-tight">
+                    Frequently asked questions
+                  </h2>
+                  <div className="mt-5 divide-y rounded-2xl border">
+                    {post.faqs.map((f, i) => (
+                      <details key={i} className="group px-5 py-4 open:bg-muted/30">
+                        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                          {f.question}
+                          <span aria-hidden className="mt-0.5 text-xl leading-none text-muted-foreground transition-transform group-open:rotate-45">
+                            +
+                          </span>
+                        </summary>
+                        <p className="mt-3 leading-relaxed whitespace-pre-line text-foreground/85">{f.answer}</p>
+                      </details>
+                    ))}
+                  </div>
+                </section>
               )}
 
               <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-muted/40 px-6 py-5">

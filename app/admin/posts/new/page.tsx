@@ -29,6 +29,7 @@ export default async function NewPostPage() {
         featured: false,
         meta_title: "",
         meta_description: "",
+        faqs: [],
         updated_at: null,
       }}
     />

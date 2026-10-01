@@ -10,6 +10,7 @@ import { requireUser } from "@/lib/auth"
 import type { PostStatus } from "@/lib/posts"
 import { getRelatedPosts, STAFF_AUTHOR } from "@/lib/queries/public"
 import { createClient } from "@/lib/supabase/server"
+import { parseFaqs } from "@/lib/faqs"
 import type { Post, Tag } from "@/types/app"
 
 export const metadata: Metadata = { title: "Preview", robots: { index: false, follow: false } }
@@ -24,7 +25,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ id: st
   const { data } = await supabase
     .from("posts")
     .select(
-      "id, title, slug, excerpt, content, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, author_id, author:profiles(id, full_name, username, avatar_url, bio, role), category:categories(id, name, slug, description), post_tags(tag:tags(id, name, slug))"
+      "id, title, slug, excerpt, content, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, faqs, author_id, author:profiles(id, full_name, username, avatar_url, bio, role), category:categories(id, name, slug, description), post_tags(tag:tags(id, name, slug))"
     )
     .eq("id", id)
     .maybeSingle()
@@ -38,6 +39,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ id: st
     tags: (data.post_tags ?? []).map((pt) => pt.tag).filter((t): t is Tag => Boolean(t)),
     // Drafts have no date yet; show today's so the byline renders as it will.
     published_at: data.published_at ?? new Date().toISOString(),
+    faqs: parseFaqs(data.faqs),
   }
   const related = await getRelatedPosts(post, 3)
 

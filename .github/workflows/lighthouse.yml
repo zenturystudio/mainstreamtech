@@ -1,0 +1,41 @@
+# Runs Lighthouse (mobile) against every successful Vercel deployment and
+# fails the check if SEO, accessibility or best practices drop below the
+# thresholds in lighthouserc.json. Reports are linked from the job summary.
+name: Lighthouse
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build URL list for this deployment
+        id: urls
+        env:
+          BASE: ${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+        run: |
+          BASE="${BASE%/}"
+          {
+            echo "list<<EOF"
+            echo "$BASE/"
+            echo "$BASE/blog"
+            echo "$BASE/blog/global-supply-chains-redrawn"
+            echo "$BASE/category/business"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: ${{ steps.urls.outputs.list }}
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          runs: 3

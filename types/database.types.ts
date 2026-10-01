@@ -102,13 +102,13 @@ isOneToOne: false
                   ]
                 },"posts": {
                   Row: {
-                    "author_id": string | null,"category_id": string | null,"content": string,"cover_image_url": string | null,"created_at": string,"excerpt": string | null,"featured": boolean,"id": string,"meta_description": string | null,"meta_title": string | null,"published_at": string | null,"reading_time": number,"search_vector": unknown,"slug": string,"status": string,"title": string,"updated_at": string,"views": number
+                    "author_id": string | null,"category_id": string | null,"content": string,"cover_image_url": string | null,"created_at": string,"excerpt": string | null,"faqs": NonNullable<Json>,"featured": boolean,"id": string,"meta_description": string | null,"meta_title": string | null,"published_at": string | null,"reading_time": number,"search_vector": unknown,"slug": string,"status": string,"title": string,"updated_at": string,"views": number
                   }
                   Insert: {
-                    "author_id"?: string | null,"category_id"?: string | null,"content"?: string,"cover_image_url"?: string | null,"created_at"?: string,"excerpt"?: string | null,"featured"?: boolean,"id"?: string,"meta_description"?: string | null,"meta_title"?: string | null,"published_at"?: string | null,"reading_time"?: number,"search_vector"?: never,"slug": string,"status"?: string,"title": string,"updated_at"?: string,"views"?: number
+                    "author_id"?: string | null,"category_id"?: string | null,"content"?: string,"cover_image_url"?: string | null,"created_at"?: string,"excerpt"?: string | null,"faqs"?: NonNullable<Json>,"featured"?: boolean,"id"?: string,"meta_description"?: string | null,"meta_title"?: string | null,"published_at"?: string | null,"reading_time"?: number,"search_vector"?: never,"slug": string,"status"?: string,"title": string,"updated_at"?: string,"views"?: number
                   }
                   Update: {
-                    "author_id"?: string | null,"category_id"?: string | null,"content"?: string,"cover_image_url"?: string | null,"created_at"?: string,"excerpt"?: string | null,"featured"?: boolean,"id"?: string,"meta_description"?: string | null,"meta_title"?: string | null,"published_at"?: string | null,"reading_time"?: number,"search_vector"?: never,"slug"?: string,"status"?: string,"title"?: string,"updated_at"?: string,"views"?: number
+                    "author_id"?: string | null,"category_id"?: string | null,"content"?: string,"cover_image_url"?: string | null,"created_at"?: string,"excerpt"?: string | null,"faqs"?: NonNullable<Json>,"featured"?: boolean,"id"?: string,"meta_description"?: string | null,"meta_title"?: string | null,"published_at"?: string | null,"reading_time"?: number,"search_vector"?: never,"slug"?: string,"status"?: string,"title"?: string,"updated_at"?: string,"views"?: number
                   }
                   Relationships: [
                     {

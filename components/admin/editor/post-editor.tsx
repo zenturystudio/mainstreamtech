@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import { ArrowLeft, Check, CircleAlert, ExternalLink, Eye, Loader2, Save } from "lucide-react"
+import { FaqEditor } from "@/components/admin/editor/faq-editor"
 import { ImageUpload } from "@/components/admin/image-upload"
 import { RichTextEditor } from "@/components/admin/editor/rich-text-editor"
 import { TagPicker } from "@/components/admin/tag-picker"
@@ -17,6 +18,7 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { isSlugAvailable, savePost } from "@/lib/actions/posts"
 import type { PostStatus } from "@/lib/posts"
+import type { Faq } from "@/types/app"
 import { cn, readingTime, slugify, timeAgo } from "@/lib/utils"
 
 export type EditorPost = {
@@ -33,6 +35,7 @@ export type EditorPost = {
   featured: boolean
   meta_title: string
   meta_description: string
+  faqs: Faq[]
   updated_at: string | null
 }
 
@@ -74,6 +77,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
       featured: post.featured,
       meta_title: post.meta_title,
       meta_description: post.meta_description,
+      faqs: post.faqs,
     },
   })
   const { control, register, setValue, getValues, formState } = form
@@ -108,6 +112,8 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
         category_id: v.category_id || null,
         published_at: v.published_at ? new Date(v.published_at).toISOString() : null,
         tag_ids: v.tag_ids,
+        // Drop pairs left completely blank; half-filled ones are rejected with a message.
+        faqs: v.faqs.filter((f) => f.question.trim() || f.answer.trim()),
       })
       setSaving(null)
 
@@ -288,6 +294,10 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
           <Section title="Excerpt" hint="Shown on cards and in search results. 1–2 sentences.">
             <Textarea rows={3} maxLength={400} aria-label="Excerpt" {...register("excerpt")} />
             <Counter value={values.excerpt} max={400} />
+          </Section>
+
+          <Section title="FAQs" hint="Optional. Shown at the end of the story and added as FAQ schema for Google.">
+            <Controller control={control} name="faqs" render={({ field }) => <FaqEditor value={field.value} onChange={field.onChange} />} />
           </Section>
         </div>
 

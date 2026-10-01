@@ -8,13 +8,10 @@ import { Pagination } from "@/components/shared/pagination"
 import { getCategories, getCategoryBySlug, getPosts } from "@/lib/queries/public"
 import { cn } from "@/lib/utils"
 
-export const revalidate = 300
+// Rendered per request: it reads ?page=, which a pre-built (static) page can't.
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?: string }> }
-
-export async function generateStaticParams() {
-  return (await getCategories()).map((c) => ({ slug: c.slug }))
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = await getCategoryBySlug((await params).slug)
@@ -56,7 +53,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
       <div className="pt-12">
         {result.items.length ? (
-          <PostGrid posts={result.items} />
+          <PostGrid posts={result.items} headingAs="h2" />
         ) : (
           <EmptyState title="Nothing here yet" description={`We haven't published anything in ${category.name} yet.`} />
         )}

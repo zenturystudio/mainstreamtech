@@ -22,7 +22,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     // Font variables must live on <html>: Tailwind applies font-sans there.
     <html lang="en-GB" suppressHydrationWarning className={`${roboto.variable} ${playfair.variable} ${geistMono.variable}`}>
-      <body className="min-h-svh antialiased">
+      {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla's cz-shortcut-listen)
+          add attributes to <body> before React loads. Only affects this element's own attributes. */}
+      <body className="min-h-svh antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           <Toaster richColors closeButton />

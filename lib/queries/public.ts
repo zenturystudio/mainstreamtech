@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { createPublicClient } from "@/lib/supabase/server"
 import { siteConfig } from "@/lib/site"
+import { parseFaqs } from "@/lib/faqs"
 import type { Author, Category, Paginated, Post, PostSummary, Tag, WithCount } from "@/types/app"
 
 // Public reads. Uses the cookie-less anon client, so RLS limits results to
@@ -15,7 +16,7 @@ const AUTHOR = "author:profiles(id, full_name, username, avatar_url, bio, role)"
 const CATEGORY = "category:categories(id, name, slug, description)"
 const TAGS = "post_tags(tag:tags(id, name, slug))"
 const SUMMARY_COLUMNS = `id, title, slug, excerpt, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, ${AUTHOR}, ${CATEGORY}, ${TAGS}`
-const POST_COLUMNS = `${SUMMARY_COLUMNS}, content`
+const POST_COLUMNS = `${SUMMARY_COLUMNS}, content, faqs`
 
 /** Byline used when a post's author account no longer exists. */
 export const STAFF_AUTHOR: Author = {
@@ -41,6 +42,7 @@ type Row = {
   meta_title: string | null
   meta_description: string | null
   content?: string
+  faqs?: unknown
   author: Author | null
   category: Category | null
   post_tags: { tag: Tag | null }[] | null
@@ -66,7 +68,7 @@ function toSummary(row: Row): PostSummary {
   }
 }
 
-export const toPost = (row: Row): Post => ({ ...toSummary(row), content: row.content ?? "" })
+export const toPost = (row: Row): Post => ({ ...toSummary(row), content: row.content ?? "", faqs: parseFaqs(row.faqs) })
 
 function db() {
   return createPublicClient()
