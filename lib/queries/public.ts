@@ -182,9 +182,11 @@ export const getPostBySlug = cache(async (slug: string): Promise<Post | null> =>
   return data ? toPost(data as unknown as Row) : null
 })
 
-export async function getAllPostSlugs(): Promise<{ slug: string; published_at: string | null }[]> {
-  const { data } = await livePosts("slug, published_at").order("published_at", { ascending: false })
-  return (data ?? []) as unknown as { slug: string; published_at: string | null }[]
+type SitemapPost = { slug: string; published_at: string | null; updated_at: string; cover_image_url: string | null }
+
+export async function getAllPostSlugs(): Promise<SitemapPost[]> {
+  const { data } = await livePosts("slug, published_at, updated_at, cover_image_url").order("published_at", { ascending: false })
+  return (data ?? []) as unknown as SitemapPost[]
 }
 
 export async function getRelatedPosts(post: PostSummary, limit = 3): Promise<PostSummary[]> {
@@ -238,6 +240,7 @@ export const getCategoryBySlug = cache(async (slug: string): Promise<Category | 
   return data
 })
 
+// Most-used first (the sidebars show the top 15).
 export const getTags = cache(async (): Promise<WithCount<Tag>[]> => {
   const [{ data: tags }, { data: links }] = await Promise.all([
     db().from("tags").select("id, name, slug"),

@@ -67,11 +67,11 @@ export default async function SearchPage({ searchParams }: Props) {
       {!query ? (
         <section className="border-t pt-10">
           <h2 className="mb-4 font-mono text-xs tracking-widest text-muted-foreground uppercase">Browse by topic</h2>
-          <TagCloud tags={tags} />
+          <TagCloud tags={tags.slice(0, 15)} />
         </section>
       ) : result.items.length === 0 ? (
         <EmptyState title="No matches found" description={`We couldn't find anything for “${query}”. Check the spelling or try a broader term.`}>
-          <TagCloud tags={tags} />
+          <TagCloud tags={tags.slice(0, 15)} />
         </EmptyState>
       ) : (
         <>

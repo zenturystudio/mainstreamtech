@@ -42,7 +42,7 @@ export default async function TagPage({ params, searchParams }: Props) {
         description={`${result.total} ${result.total === 1 ? "article" : "articles"} tagged ${tag.name}.`}
       >
         <div className="mt-8">
-          <TagCloud tags={tags} activeSlug={slug} />
+          <TagCloud tags={tags.slice(0, 15).some((t) => t.slug === slug) ? tags.slice(0, 15) : [...tags.slice(0, 14), ...tags.filter((t) => t.slug === slug)]} activeSlug={slug} />
         </div>
       </PageHeader>
 

@@ -111,7 +111,7 @@ export default async function HomePage() {
           <div className="flex flex-col gap-6 lg:sticky lg:top-24">
             <NewsletterCard />
             <SidebarSection title="Topics">
-              <TagCloud tags={tags} />
+              <TagCloud tags={tags.slice(0, 15)} />
             </SidebarSection>
           </div>
         </aside>
