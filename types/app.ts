@@ -9,7 +9,7 @@ export type Tag = Pick<Tables<"tags">, "id" | "name" | "slug">
 
 export type Faq = { question: string; answer: string }
 
-export type Post = Omit<Tables<"posts">, "search_vector" | "author_id" | "category_id" | "created_at" | "updated_at" | "faqs"> & {
+export type Post = Omit<Tables<"posts">, "search_vector" | "author_id" | "category_id" | "created_at" | "updated_at" | "faqs" | "source" | "source_meta"> & {
   faqs: Faq[]
   author: Author
   category: Category | null

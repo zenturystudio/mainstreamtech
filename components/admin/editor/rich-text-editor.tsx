@@ -3,6 +3,7 @@
 import { useRef, useState } from "react"
 import { EditorContent, useEditor, useEditorState, type Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import { TableKit } from "@tiptap/extension-table"
 import Image from "@tiptap/extension-image"
 import Placeholder from "@tiptap/extension-placeholder"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
@@ -54,6 +55,8 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
       // Privacy-friendly embeds; the site sanitizer only allows YouTube iframes.
       Youtube.configure({ nocookie: true, width: 640, height: 360, controls: true }),
       Image.configure({ HTMLAttributes: { loading: "lazy" } }),
+      // Keeps tables (e.g. from Clomark posts) intact when a story is edited here.
+      TableKit.configure({ table: { resizable: false } }),
       Placeholder.configure({ placeholder: "Start writing your story…" }),
     ],
     content: value,
