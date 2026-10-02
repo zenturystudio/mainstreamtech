@@ -63,7 +63,8 @@ const bodySchema = z.object({
     .nullish()
     .transform((v) => v ?? []),
   focusKeyword: optionalString(200),
-  contentType: z.literal("blog", { error: 'contentType must be "blog"' }).nullish(),
+  // Clomark sends "blog_post" for some sites and "blog" for others; both mean a blog post.
+  contentType: z.enum(["blog", "blog_post"], { error: 'contentType must be "blog" or "blog_post"' }).nullish(),
   status: z.enum(["published", "draft"], { error: 'status must be "published" or "draft"' }).nullish(),
   allowOverwrite: z.boolean().nullish(),
   campaign: z.unknown().optional(),
