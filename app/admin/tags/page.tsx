@@ -16,7 +16,7 @@ export default async function TagsPage() {
       <PageHeading
         title="Tags"
         description={
-          session.isAdmin ? "Topics that cut across sections." : "Topics that cut across sections. Add new tags from the post editor; only admins can rename or delete them."
+          session.isAdmin ? "Topics that cut across categories." : "Topics that cut across categories. Add new tags from the post editor; only admins can rename or delete them."
         }
       />
       <TaxonomyManager kind="tag" items={tags} canEdit={session.isAdmin} siteBase={siteOrigin()} />

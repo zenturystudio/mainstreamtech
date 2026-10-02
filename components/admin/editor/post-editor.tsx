@@ -349,19 +349,19 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
             </div>
           </Section>
 
-          <Section title="Section & tags">
+          <Section title="Category & tags">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="post-category">Section</Label>
+              <Label htmlFor="post-category">Category</Label>
               <Controller
                 control={control}
                 name="category_id"
                 render={({ field }) => (
                   <Select value={field.value || NO_CATEGORY} onValueChange={(v) => field.onChange(v === NO_CATEGORY ? "" : v)}>
                     <SelectTrigger id="post-category" className="w-full">
-                      <SelectValue placeholder="Choose a section" />
+                      <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NO_CATEGORY}>No section</SelectItem>
+                      <SelectItem value={NO_CATEGORY}>No category</SelectItem>
                       {categories.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.name}

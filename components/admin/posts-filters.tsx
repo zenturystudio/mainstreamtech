@@ -50,7 +50,7 @@ export function PostsFilters({ categories, authors }: { categories: Option[]; au
       </div>
       <div className="flex flex-wrap gap-2">
         <FilterSelect label="Status" value={params.get("status")} onChange={(v) => update({ status: v })} options={[{ id: "draft", name: "Draft" }, { id: "published", name: "Published" }, { id: "scheduled", name: "Scheduled" }]} />
-        <FilterSelect label="Section" value={params.get("category")} onChange={(v) => update({ category: v })} options={categories} />
+        <FilterSelect label="Category" value={params.get("category")} onChange={(v) => update({ category: v })} options={categories} />
         {authors && <FilterSelect label="Author" value={params.get("author")} onChange={(v) => update({ author: v })} options={authors} />}
         <Select value={params.get("sort") ?? "updated"} onValueChange={(v) => update({ sort: v === "updated" ? null : v })}>
           <SelectTrigger className="h-9 w-40" aria-label="Sort by">
@@ -88,7 +88,7 @@ function FilterSelect({ label, value, onChange, options }: { label: string; valu
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={ALL}>All {label === "Status" ? "statuses" : label === "Section" ? "sections" : "authors"}</SelectItem>
+        <SelectItem value={ALL}>All {label === "Status" ? "statuses" : label === "Category" ? "categories" : "authors"}</SelectItem>
         {options.map((o) => (
           <SelectItem key={o.id} value={o.id}>
             {o.name}

@@ -16,6 +16,7 @@ import { deletePosts, duplicatePost } from "@/lib/actions/posts"
 import { effectiveStatus, type PostStatus } from "@/lib/posts"
 import { formatDate, timeAgo } from "@/lib/utils"
 import type { AdminPostRow } from "@/lib/queries/admin"
+import { siteConfig } from "@/lib/site"
 import { postPath } from "@/lib/urls"
 
 export function PostsTable({ posts, siteBase, showAuthor, filtered }: { posts: AdminPostRow[]; siteBase: string; showAuthor: boolean; filtered: boolean }) {
@@ -97,7 +98,7 @@ export function PostsTable({ posts, siteBase, showAuthor, filtered }: { posts: A
             </TableHead>
             <TableHead>Title</TableHead>
             <TableHead className="hidden md:table-cell">Status</TableHead>
-            <TableHead className="hidden lg:table-cell">Section</TableHead>
+            <TableHead className="hidden lg:table-cell">Category</TableHead>
             {showAuthor && <TableHead className="hidden xl:table-cell">Author</TableHead>}
             <TableHead className="hidden text-right sm:table-cell">Views</TableHead>
             <TableHead className="hidden lg:table-cell">Date</TableHead>
@@ -128,7 +129,7 @@ export function PostsTable({ posts, siteBase, showAuthor, filtered }: { posts: A
                   <StatusBadge status={post.status as PostStatus} publishedAt={post.published_at} />
                 </TableCell>
                 <TableCell className="hidden text-muted-foreground lg:table-cell">{post.category?.name ?? "—"}</TableCell>
-                {showAuthor && <TableCell className="hidden text-muted-foreground xl:table-cell">{post.author?.full_name ?? "—"}</TableCell>}
+                {showAuthor && <TableCell className="hidden text-muted-foreground xl:table-cell">{post.author?.full_name ?? siteConfig.name}</TableCell>}
                 <TableCell className="hidden text-right tabular-nums sm:table-cell">{post.views.toLocaleString("en-GB")}</TableCell>
                 <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                   {post.status === "draft" ? (

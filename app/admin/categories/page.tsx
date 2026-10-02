@@ -15,7 +15,7 @@ export default async function CategoriesPage() {
     <div className="mx-auto max-w-5xl">
       <PageHeading
         title="Categories"
-        description={session.isAdmin ? "The sections of the site. Every post belongs to one." : "The sections of the site. Only admins can change them."}
+        description={session.isAdmin ? "The categories of the site. Every post belongs to one." : "The categories of the site. Only admins can change them."}
       />
       <TaxonomyManager kind="category" items={categories} canEdit={session.isAdmin} siteBase={siteOrigin()} />
     </div>

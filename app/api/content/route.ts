@@ -182,7 +182,11 @@ export async function POST(request: Request) {
   // Category, tags, author and "featured" are left alone on updates: editors set those.
   const result = existing
     ? await db.from("posts").update(fields).eq("id", existing.id).eq("source", "clomark").select("id, slug, status").single()
-    : await db.from("posts").insert({ ...fields, slug: input.slug, author_id: null }).select("id, slug, status").single()
+    : await db
+        .from("posts")
+        .insert({ ...fields, slug: input.slug, author_id: null, category_id: await defaultCategoryId(db) })
+        .select("id, slug, status")
+        .single()
   if (result.error) {
     if (result.error.code === "23505") return apiError(409, `The slug "${input.slug}" was just taken by another post. Retry or use a different slug.`)
     return serverError("save", result.error.message)
@@ -222,6 +226,17 @@ async function rehostInlineImages(html: string, warnings: string[]): Promise<str
     }
   }
   return out
+}
+
+/**
+ * Clomark sends no category, so new posts go into CLOMARK_DEFAULT_CATEGORY
+ * (a category slug, default "technology"). Editors can change it in the admin.
+ */
+async function defaultCategoryId(db: ReturnType<typeof createAdminClient>): Promise<string | null> {
+  const slug = process.env.CLOMARK_DEFAULT_CATEGORY?.trim() || "technology"
+  const { data } = await db.from("categories").select("id").eq("slug", slug).maybeSingle()
+  if (!data) console.error(`[clomark] default category "${slug}" not found; post saved without a category`)
+  return data?.id ?? null
 }
 
 function serverError(step: string, message: string) {
