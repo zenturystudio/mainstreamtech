@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Check, Link2 } from "lucide-react"
 import { FaFacebookF, FaLinkedinIn, FaWhatsapp, FaXTwitter } from "react-icons/fa6"
-import { toast } from "sonner"
+import { notify as toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 
 export function ShareButtons({ url, title, className }: { url: string; title: string; className?: string }) {

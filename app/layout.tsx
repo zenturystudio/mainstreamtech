@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Geist_Mono, Playfair_Display, Roboto } from "next/font/google"
 import { ThemeProvider } from "@/components/providers/theme-provider"
-import { Toaster } from "@/components/ui/sonner"
+import { LazyToaster } from "@/components/ui/lazy-toaster"
 import { siteConfig } from "@/lib/site"
 import "./globals.css"
 
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-svh antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
-          <Toaster richColors closeButton />
+          <LazyToaster />
         </ThemeProvider>
       </body>
     </html>

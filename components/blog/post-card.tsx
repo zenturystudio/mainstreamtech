@@ -62,6 +62,7 @@ export function PostCard({
             alt={post.title}
             fill
             priority={priority}
+            fetchPriority={priority ? "high" : undefined}
             sizes={horizontal ? "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" : "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"}
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
@@ -84,8 +85,9 @@ export function PostCard({
 export function PostGrid({ posts, className, headingAs }: { posts: PostSummary[]; className?: string; headingAs?: "h2" | "h3" }) {
   return (
     <div className={cn("grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3", className)}>
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} headingAs={headingAs} />
+      {posts.map((post, i) => (
+        // Grids sit near the top of their pages: the first image is the likely LCP.
+        <PostCard key={post.id} post={post} headingAs={headingAs} priority={i === 0} />
       ))}
     </div>
   )

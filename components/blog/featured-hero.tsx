@@ -21,6 +21,7 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
               alt={lead.title}
               fill
               priority
+              fetchPriority="high"
               sizes="(min-width: 1280px) 800px, (min-width: 1024px) 66vw, 100vw"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
             />

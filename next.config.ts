@@ -50,6 +50,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: { bodySizeLimit: "6mb" },
+    // shadcn imports from the "radix-ui" barrel (even Button does, for Slot);
+    // without this every page ships every Radix component.
+    optimizePackageImports: ["radix-ui"],
   },
 }
 

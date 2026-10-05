@@ -126,7 +126,7 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
         {post.cover_image_url && (
           <Container className="mt-10 max-w-6xl">
             <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-muted sm:aspect-[2/1]">
-              <Image src={post.cover_image_url} alt={post.title} fill priority sizes="(min-width: 1280px) 1150px, 100vw" className="object-cover" />
+              <Image src={post.cover_image_url} alt={post.title} fill priority fetchPriority="high" sizes="(min-width: 1280px) 1150px, 100vw" className="object-cover" />
             </div>
           </Container>
         )}

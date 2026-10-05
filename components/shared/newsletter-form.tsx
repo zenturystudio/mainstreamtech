@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { toast } from "sonner"
+import { notify as toast } from "@/lib/toast"
 import { ArrowRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
