@@ -13,12 +13,16 @@ export const dynamic = "force-dynamic"
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const tag = await getTagBySlug((await params).slug)
+  const [tag, tags] = await Promise.all([getTagBySlug((await params).slug), getTags()])
   if (!tag) return {}
+  // A tag used by a single story only repeats that story: Google reports these as
+  // "Crawled - currently not indexed", so keep them out (the sitemap skips them too).
+  const postCount = tags.find((t) => t.id === tag.id)?.postCount ?? 0
   return {
     title: `#${tag.name}`,
     description: `Articles tagged ${tag.name} on Mainstream Tech.`,
     alternates: { canonical: `/tag/${tag.slug}` },
+    ...(postCount <= 1 ? { robots: { index: false, follow: true } } : {}),
   }
 }
 

@@ -42,6 +42,10 @@ const nextConfig: NextConfig = {
       // work: the trailing slash is redirected away).
       { source: "/feed", destination: "/rss.xml", permanent: true },
       { source: "/feed/:rest*", destination: "/rss.xml", permanent: true },
+      // Per-story/tag/category WordPress feeds point at the page they belonged to.
+      { source: "/tag/:slug/feed/:rest*", destination: "/tag/:slug", permanent: true },
+      { source: "/category/:slug/feed/:rest*", destination: "/category/:slug", permanent: true },
+      { source: "/:slug/feed/:rest*", destination: "/:slug", permanent: true },
       // Yoast sitemaps that Google already knows about.
       { source: "/:name(sitemap_index|post-sitemap|page-sitemap|category-sitemap|post_tag-sitemap|author-sitemap).xml", destination: "/sitemap.xml", permanent: true },
       // WordPress author pages, until these writers get their own profiles here.
