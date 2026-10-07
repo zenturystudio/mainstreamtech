@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { updateSession } from "@/lib/supabase/middleware"
 
-// Leftovers from the old WordPress site (and bot probes Google picked up):
-// 410 Gone tells search engines to drop them, instead of a 200 "not found" page.
-const GONE = /^\/(?:wp-(?:admin|content|includes|json)|wp-[^/]*\.php|index\.php|xmlrpc\.php|[&$*])(?:\/|$)/
+// Leftovers from the old WordPress site (any /wp or /wp-… path) and bot probes
+// Google picked up: 410 Gone tells search engines to drop them, instead of a 200
+// "not found" page. Story slugs can't start with "wp" (isReservedSlug).
+const GONE = /^\/(?:wp(?:-[^/]*)?|index\.php|xmlrpc\.php|[&$*])(?:\/|$)/i
 
 export async function middleware(request: NextRequest) {
   if (GONE.test(request.nextUrl.pathname)) {

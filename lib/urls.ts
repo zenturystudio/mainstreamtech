@@ -32,3 +32,11 @@ export const RESERVED_SLUGS = [
   "about", "admin", "api", "feed", "auth", "author", "blog", "category", "contact", "login", "preview", "search", "tag",
   "rss.xml", "sitemap.xml", "robots.txt", "opengraph-image", "icon.png", "apple-icon.png", "favicon.ico",
 ] as const
+
+/** Old WordPress paths (/wp, /wp-…) answer 410 Gone in middleware, so no story may use them. */
+export const WORDPRESS_PATH = /^wp(?:-|$)/i
+
+/** True when a story can't use this slug (see RESERVED_SLUGS and WORDPRESS_PATH). */
+export function isReservedSlug(slug: string): boolean {
+  return (RESERVED_SLUGS as readonly string[]).includes(slug) || WORDPRESS_PATH.test(slug)
+}

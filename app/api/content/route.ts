@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { revalidateSite } from "@/lib/actions/helpers"
 import { MAX_JSON_BYTES, apiError, authError, plainText, prepareClomarkHtml, rateLimit, rehostImage } from "@/lib/clomark"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { RESERVED_SLUGS, postPath } from "@/lib/urls"
+import { isReservedSlug, postPath } from "@/lib/urls"
 import { absoluteUrl, readingTime } from "@/lib/utils"
 import type { Json } from "@/types/database.types"
 
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
     return apiError(400, issue ? (field && !issue.message.includes(field.split(".")[0]) ? `${field}: ${issue.message}` : issue.message) : "Invalid body")
   }
   const input = parsed.data
-  if ((RESERVED_SLUGS as readonly string[]).includes(input.slug))
+  if (isReservedSlug(input.slug))
     return apiError(409, `The slug "${input.slug}" is used by a page on this site. Choose a different slug.`)
 
   // --- Ownership check -------------------------------------------------------

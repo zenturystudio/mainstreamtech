@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { RESERVED_SLUGS } from "@/lib/urls"
+import { isReservedSlug } from "@/lib/urls"
 
 const slug = z
   .string()
@@ -33,7 +33,7 @@ export const postSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required").max(200),
     // Stories live at /{slug}, so a slug can't clash with an existing page.
-    slug: slug.refine((s) => !(RESERVED_SLUGS as readonly string[]).includes(s), {
+    slug: slug.refine((s) => !isReservedSlug(s), {
       message: "This address is used by another page on the site. Choose a different slug.",
     }),
     excerpt: optionalText(400),

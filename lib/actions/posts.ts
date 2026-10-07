@@ -4,7 +4,7 @@ import { guardUser } from "@/lib/auth"
 import { sanitizeStoryHtml } from "@/lib/sanitize"
 import { dbError, firstIssue, revalidateSite } from "@/lib/actions/helpers"
 import { createClient } from "@/lib/supabase/server"
-import { RESERVED_SLUGS } from "@/lib/urls"
+import { isReservedSlug } from "@/lib/urls"
 import { readingTime } from "@/lib/utils"
 import { postSchema } from "@/lib/validations/cms"
 import type { ActionResult } from "@/types/app"
@@ -57,7 +57,7 @@ export async function savePost(id: string | null, input: unknown): Promise<SaveR
 export async function isSlugAvailable(slug: string, excludeId: string | null): Promise<boolean> {
   const guard = await guardUser()
   if (!guard.ok || !slug) return false
-  if ((RESERVED_SLUGS as readonly string[]).includes(slug)) return false
+  if (isReservedSlug(slug)) return false
   const supabase = await createClient()
   // RLS hides other authors' drafts, so authors may get a false "available";
   // the unique constraint still catches it on save.
