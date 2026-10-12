@@ -8,13 +8,18 @@ import { getPosts, type SortOrder } from "@/lib/queries/public"
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Every story on Mainstream Tech: technology, AI, business, politics and international news.",
-  alternates: { canonical: "/blog" },
-}
-
 type Props = { searchParams: Promise<{ page?: string; sort?: string }> }
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { page, sort } = await searchParams
+  return {
+    title: "Blog",
+    description: "Every story on Mainstream Tech: technology, AI, business, politics and international news.",
+    alternates: { canonical: "/blog" },
+    // Later pages and other sort orders repeat page 1: keep them out of Google.
+    ...(Number(page) > 1 || sort ? { robots: { index: false, follow: true } } : {}),
+  }
+}
 
 export default async function BlogPage({ searchParams }: Props) {
   const params = await searchParams

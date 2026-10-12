@@ -13,13 +13,15 @@ export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?: string }> }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const category = await getCategoryBySlug((await params).slug)
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const [category, { page }] = await Promise.all([getCategoryBySlug((await params).slug), searchParams])
   if (!category) return {}
   return {
     title: category.name,
     description: category.description ?? undefined,
     alternates: { canonical: `/category/${category.slug}` },
+    // Page 2+ only repeats the listing: keep it out of Google.
+    ...(Number(page) > 1 ? { robots: { index: false, follow: true } } : {}),
   }
 }
 

@@ -13,13 +13,15 @@ export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ username: string }>; searchParams: Promise<{ page?: string }> }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const author = await getAuthorByUsername((await params).username)
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const [author, { page }] = await Promise.all([getAuthorByUsername((await params).username), searchParams])
   if (!author) return {}
   return {
     title: author.full_name ?? author.username ?? "Author",
     description: author.bio ?? undefined,
     alternates: { canonical: `/author/${author.username}` },
+    // Page 2+ only repeats the listing: keep it out of Google.
+    ...(Number(page) > 1 ? { robots: { index: false, follow: true } } : {}),
   }
 }
 
