@@ -37,7 +37,6 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
                 {lead.title}
               </Link>
             </h3>
-            {lead.excerpt && <p className="line-clamp-2 hidden max-w-2xl text-base text-white/80 sm:block sm:text-lg">{lead.excerpt}</p>}
             <PostMeta
               author={lead.author}
               publishedAt={lead.published_at}
