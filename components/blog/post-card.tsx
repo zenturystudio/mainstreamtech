@@ -31,8 +31,8 @@ export function PostCard({
     return (
       <article className={cn("group relative flex gap-4", className)}>
         {post.cover_image_url && (
-          <div className="relative aspect-square w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
-            <Image src={post.cover_image_url} alt="" fill sizes="80px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div className="relative aspect-[16/9] w-28 shrink-0 self-start overflow-hidden rounded-lg bg-muted">
+            <Image src={post.cover_image_url} alt="" fill sizes="256px" quality={85} className="object-cover transition-transform duration-500 group-hover:scale-105" />
           </div>
         )}
         <div className="flex min-w-0 flex-col justify-center gap-1.5">
