@@ -125,8 +125,9 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
 
         {post.cover_image_url && (
           <Container className="mt-10 max-w-6xl">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-muted sm:aspect-[2/1]">
-              <Image src={post.cover_image_url} alt={post.cover_image_alt || post.title} fill priority fetchPriority="high" sizes="(min-width: 1280px) 1150px, 100vw" className="object-cover" />
+            {/* Show the whole cover at its own proportions (no cropping); 16:9 is only the pre-load placeholder. */}
+            <div className="overflow-hidden rounded-3xl bg-muted">
+              <Image src={post.cover_image_url} alt={post.cover_image_alt || post.title} width={1600} height={900} priority fetchPriority="high" sizes="(min-width: 1280px) 1150px, 100vw" className="mx-auto h-auto max-h-[80vh] w-full object-contain" />
             </div>
           </Container>
         )}
