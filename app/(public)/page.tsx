@@ -49,7 +49,7 @@ const LATEST_COUNT = 9
 
 export default async function HomePage() {
   const [featured, trending, categories, popular, tags] = await Promise.all([
-    getFeaturedPosts(4),
+    getFeaturedPosts(5),
     getTrendingPosts(4),
     getCategories(),
     getPopularPosts(5),
