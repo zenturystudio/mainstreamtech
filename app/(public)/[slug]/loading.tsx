@@ -16,7 +16,7 @@ export default function Loading() {
         </div>
       </Container>
       <Container className="mt-10 max-w-6xl">
-        <Skeleton className="aspect-[2/1] rounded-3xl" />
+        <Skeleton className="aspect-[16/9] rounded-3xl" />
       </Container>
       <Container className="mt-14 max-w-[720px] space-y-4">
         {Array.from({ length: 8 }, (_, i) => (
