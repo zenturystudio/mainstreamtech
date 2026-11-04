@@ -25,7 +25,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ id: st
   const { data } = await supabase
     .from("posts")
     .select(
-      "id, title, slug, excerpt, content, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, faqs, author_id, author:profiles(id, full_name, username, avatar_url, bio, role), category:categories(id, name, slug, description), post_tags(tag:tags(id, name, slug))"
+      "id, title, slug, excerpt, content, cover_image_url, cover_image_alt, status, published_at, featured, views, reading_time, meta_title, meta_description, faqs, author_id, author:profiles(id, full_name, username, avatar_url, bio, role), category:categories(id, name, slug, description), post_tags(tag:tags(id, name, slug))"
     )
     .eq("id", id)
     .maybeSingle()

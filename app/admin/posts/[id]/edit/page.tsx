@@ -32,6 +32,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
         excerpt: post.excerpt ?? "",
         content: post.content,
         cover_image_url: post.cover_image_url,
+        cover_image_alt: post.cover_image_alt ?? "",
         status: post.status as PostStatus,
         published_at: post.published_at,
         category_id: post.category_id ?? "",

@@ -15,7 +15,7 @@ export type SortOrder = "latest" | "popular"
 const AUTHOR = "author:profiles(id, full_name, username, avatar_url, bio, role)"
 const CATEGORY = "category:categories(id, name, slug, description)"
 const TAGS = "post_tags(tag:tags(id, name, slug))"
-const SUMMARY_COLUMNS = `id, title, slug, excerpt, cover_image_url, status, published_at, featured, views, reading_time, meta_title, meta_description, ${AUTHOR}, ${CATEGORY}, ${TAGS}`
+const SUMMARY_COLUMNS = `id, title, slug, excerpt, cover_image_url, cover_image_alt, status, published_at, featured, views, reading_time, meta_title, meta_description, ${AUTHOR}, ${CATEGORY}, ${TAGS}`
 const POST_COLUMNS = `${SUMMARY_COLUMNS}, content, faqs`
 
 /**
@@ -39,6 +39,7 @@ type Row = {
   slug: string
   excerpt: string | null
   cover_image_url: string | null
+  cover_image_alt?: string | null
   status: string
   published_at: string | null
   featured: boolean
@@ -60,6 +61,7 @@ function toSummary(row: Row): PostSummary {
     slug: row.slug,
     excerpt: row.excerpt,
     cover_image_url: row.cover_image_url,
+    cover_image_alt: row.cover_image_alt ?? null,
     status: row.status as Post["status"],
     published_at: row.published_at,
     featured: row.featured,

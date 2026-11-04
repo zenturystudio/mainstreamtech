@@ -92,7 +92,7 @@ export async function duplicatePost(id: string): Promise<{ success: true; id: st
 
   const { data: post, error } = await supabase
     .from("posts")
-    .select("title, slug, excerpt, content, cover_image_url, category_id, reading_time, meta_title, meta_description, faqs, post_tags(tag_id)")
+    .select("title, slug, excerpt, content, cover_image_url, cover_image_alt, category_id, reading_time, meta_title, meta_description, faqs, post_tags(tag_id)")
     .eq("id", id)
     .single()
   if (error) return { success: false, error: dbError(error, "post") }

@@ -38,6 +38,7 @@ export const postSchema = z
     }),
     excerpt: optionalText(400),
     content: z.string().max(500_000),
+    cover_image_alt: optionalText(250),
     cover_image_url: z.string().url().nullable().optional().or(z.literal("").transform(() => null)),
     status: z.enum(["draft", "published", "scheduled"]),
     published_at: z.string().datetime({ offset: true }).nullable().optional(),

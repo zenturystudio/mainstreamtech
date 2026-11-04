@@ -22,6 +22,7 @@ export default async function NewPostPage() {
         excerpt: "",
         content: "",
         cover_image_url: null,
+        cover_image_alt: "",
         status: "draft",
         published_at: null,
         category_id: "",

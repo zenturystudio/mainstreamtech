@@ -29,6 +29,7 @@ export type EditorPost = {
   excerpt: string
   content: string
   cover_image_url: string | null
+  cover_image_alt: string
   status: PostStatus
   published_at: string | null
   category_id: string
@@ -71,6 +72,7 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
       excerpt: post.excerpt,
       content: post.content,
       cover_image_url: post.cover_image_url,
+      cover_image_alt: post.cover_image_alt,
       status: post.status,
       published_at: post.published_at,
       category_id: post.category_id,
@@ -380,6 +382,11 @@ export function PostEditor({ post, categories, tags, siteBase }: { post: EditorP
 
           <Section title="Cover image">
             <Controller control={control} name="cover_image_url" render={({ field }) => <ImageUpload value={field.value} onChange={(url) => field.onChange(url)} label="Upload cover image" folder="blog" />} />
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="cover-alt">Alt text</Label>
+              <Input id="cover-alt" maxLength={250} placeholder="Describe the image for screen readers and search engines" {...register("cover_image_alt")} />
+              <Counter value={values.cover_image_alt} max={125} hardMax={250} />
+            </div>
           </Section>
 
           <Section title="SEO" hint="Leave blank to use the title and excerpt.">

@@ -18,7 +18,7 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
           {lead.cover_image_url && (
             <Image
               src={lead.cover_image_url}
-              alt={lead.title}
+              alt={lead.cover_image_alt || lead.title}
               fill
               priority
               fetchPriority="high"

@@ -59,7 +59,7 @@ export function PostCard({
         {post.cover_image_url && (
           <Image
             src={post.cover_image_url}
-            alt={post.title}
+            alt={post.cover_image_alt || post.title}
             fill
             priority={priority}
             fetchPriority={priority ? "high" : undefined}
