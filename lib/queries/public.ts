@@ -349,3 +349,10 @@ export async function searchPosts(query: string, page = 1): Promise<Paginated<Se
   const total = Number(hits[0].total_count)
   return { items, page: current, total, totalPages: Math.max(1, Math.ceil(total / SEARCH_PAGE_SIZE)) }
 }
+
+/** Stories published in the last two days, for the Google News sitemap. */
+export async function getRecentNewsPosts(): Promise<{ slug: string; title: string; published_at: string }[]> {
+  const since = new Date(Date.now() - 48 * 3_600_000).toISOString()
+  const { data } = await livePosts("slug, title, published_at").gte("published_at", since).order("published_at", { ascending: false }).limit(1000)
+  return (data ?? []) as unknown as { slug: string; title: string; published_at: string }[]
+}

@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Everything except static assets and image optimisation files.
-    "/((?!_next/static|_next/image|favicon.ico|rss.xml|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|rss.xml|sitemap.xml|news-sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
     // Old WordPress uploads are images, which the pattern above skips.
     "/wp-content/:path*",
   ],

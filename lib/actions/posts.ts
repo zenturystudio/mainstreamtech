@@ -1,11 +1,13 @@
 "use server"
 
+import { after } from "next/server"
 import { guardUser } from "@/lib/auth"
 import { sanitizeStoryHtml } from "@/lib/sanitize"
 import { dbError, firstIssue, revalidateSite } from "@/lib/actions/helpers"
 import { createClient } from "@/lib/supabase/server"
-import { isReservedSlug } from "@/lib/urls"
-import { readingTime } from "@/lib/utils"
+import { pingIndexNow } from "@/lib/indexnow"
+import { isReservedSlug, postPath } from "@/lib/urls"
+import { absoluteUrl, readingTime } from "@/lib/utils"
 import { postSchema } from "@/lib/validations/cms"
 import type { ActionResult } from "@/types/app"
 
@@ -50,6 +52,8 @@ export async function savePost(id: string | null, input: unknown): Promise<SaveR
   }
 
   revalidateSite()
+  // Tell Bing & co. about the live story once the response has been sent.
+  if (data.status === "published") after(() => pingIndexNow([absoluteUrl(postPath(data.slug))]))
   return { success: true, id: data.id, slug: data.slug, status: data.status, publishedAt: data.published_at }
 }
 
