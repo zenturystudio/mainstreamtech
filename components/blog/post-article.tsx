@@ -32,10 +32,11 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
   const url = absoluteUrl(postPath(post.slug))
   const authorHref = post.author.username ? `/author/${post.author.username}` : null
 
-  // An "Updated" line only for real edits made after publishing (updated_at
-  // ignores view counts and the Featured toggle) and more than an hour later.
+  // An "Updated" line only for real edits: more than an hour after publishing and
+  // within 30 days of it (news updates; also guards against old view-count bumps).
+  // updated_at ignores view counts and the Featured toggle (migration 20261105000000).
   const modified =
-    post.updated_at && post.published_at && Date.parse(post.updated_at) - Date.parse(post.published_at) > 3_600_000
+    post.updated_at && post.published_at && isRealUpdate(post.published_at, post.updated_at)
       ? post.updated_at
       : null
 
@@ -239,4 +240,10 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
       )}
     </>
   )
+}
+
+const HOUR = 3_600_000
+function isRealUpdate(published: string, updated: string): boolean {
+  const gap = Date.parse(updated) - Date.parse(published)
+  return gap > HOUR && gap < 30 * 24 * HOUR
 }
