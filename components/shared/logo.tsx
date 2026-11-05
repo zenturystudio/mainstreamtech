@@ -8,6 +8,9 @@ import logoWhite from "@/public/logo-white.png"
 /**
  * Brand wordmark from mainstreamtech.co.uk; the white version shows in dark mode.
  * A logo uploaded in CMS Settings (`src`) replaces both.
+ *
+ * Not `priority`: that preloaded BOTH variants at 1080/1920px wide and competed
+ * with the hero image (the real LCP). The wordmark shows at ~180px wide.
  */
 export function Logo({ className, src }: { className?: string; src?: string | null }) {
   return (
@@ -18,8 +21,8 @@ export function Logo({ className, src }: { className?: string; src?: string | nu
         <img src={isCdnEligible(src) ? cdnImageUrl(src, 640) : src} alt="" className="h-[22px] w-auto sm:h-6" />
       ) : (
         <>
-          <Image src={logoDark} alt="" priority className="h-[22px] w-auto sm:h-6 dark:hidden" />
-          <Image src={logoWhite} alt="" priority className="hidden h-[22px] w-auto sm:h-6 dark:block" />
+          <Image src={logoDark} alt="" sizes="180px" className="h-[22px] w-auto sm:h-6 dark:hidden" />
+          <Image src={logoWhite} alt="" sizes="180px" className="hidden h-[22px] w-auto sm:h-6 dark:block" />
         </>
       )}
     </Link>
