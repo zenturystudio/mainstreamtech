@@ -4,9 +4,11 @@ import { EmptyState } from "@/components/blog/page-header"
 import { PostGrid } from "@/components/blog/post-card"
 import { AuthorAvatar } from "@/components/blog/post-meta"
 import { Container } from "@/components/shared/container"
+import { JsonLd } from "@/components/shared/json-ld"
 import { Pagination } from "@/components/shared/pagination"
 import { SocialLinks } from "@/components/shared/social-links"
 import { getAuthorByUsername, getPosts } from "@/lib/queries/public"
+import { absoluteUrl } from "@/lib/utils"
 
 // Rendered per request: it reads ?page=, which a pre-built (static) page can't.
 export const dynamic = "force-dynamic"
@@ -15,9 +17,10 @@ type Props = { params: Promise<{ username: string }>; searchParams: Promise<{ pa
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const [author, { page }] = await Promise.all([getAuthorByUsername((await params).username), searchParams])
-  if (!author) return {}
+  if (!author) notFound()
   return {
-    title: author.full_name ?? author.username ?? "Author",
+    // The staff byline shares the site name, which made "Mainstream Tech | Mainstream Tech".
+    title: author.id === "staff" ? "Newsroom" : (author.full_name ?? author.username ?? "Author"),
     description: author.bio ?? undefined,
     alternates: { canonical: `/author/${author.username}` },
     // Page 2+ only repeats the listing: keep it out of Google.
@@ -32,8 +35,30 @@ export default async function AuthorPage({ params, searchParams }: Props) {
 
   const result = await getPosts({ author: username, page: Number(page) || 1 })
 
+  const pageUrl = absoluteUrl(`/author/${author.username}`)
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url: pageUrl,
+      mainEntity:
+        author.id === "staff"
+          ? { "@type": "NewsMediaOrganization", "@id": absoluteUrl("/#organization"), name: author.full_name, url: absoluteUrl("/") }
+          : { "@type": "Person", name: author.full_name, url: pageUrl, description: author.bio ?? undefined, image: author.avatar_url ?? undefined },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: author.full_name ?? "Author", item: pageUrl },
+      ],
+    },
+  ]
+
   return (
     <Container>
+      <JsonLd data={jsonLd} />
       <header className="flex flex-col gap-8 border-b pt-12 pb-12 sm:flex-row sm:items-center sm:pt-16">
         <AuthorAvatar author={author} size={120} className="ring-4 ring-muted" />
         <div className="min-w-0 flex-1">

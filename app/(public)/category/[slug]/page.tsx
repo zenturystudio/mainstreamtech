@@ -4,9 +4,10 @@ import { notFound } from "next/navigation"
 import { EmptyState, PageHeader } from "@/components/blog/page-header"
 import { PostGrid } from "@/components/blog/post-card"
 import { Container } from "@/components/shared/container"
+import { JsonLd } from "@/components/shared/json-ld"
 import { Pagination } from "@/components/shared/pagination"
 import { getCategories, getCategoryBySlug, getPosts } from "@/lib/queries/public"
-import { cn } from "@/lib/utils"
+import { absoluteUrl, cn } from "@/lib/utils"
 
 // Rendered per request: it reads ?page=, which a pre-built (static) page can't.
 export const dynamic = "force-dynamic"
@@ -15,7 +16,7 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?:
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const [category, { page }] = await Promise.all([getCategoryBySlug((await params).slug), searchParams])
-  if (!category) return {}
+  if (!category) notFound()
   return {
     title: category.name,
     description: category.description ?? undefined,
@@ -32,8 +33,30 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   const [result, categories] = await Promise.all([getPosts({ category: slug, page: Number(page) || 1 }), getCategories()])
 
+  const pageUrl = absoluteUrl(`/category/${category.slug}`)
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: category.name,
+      description: category.description ?? undefined,
+      url: pageUrl,
+      inLanguage: "en-GB",
+      isPartOf: { "@id": absoluteUrl("/#website") },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: category.name, item: pageUrl },
+      ],
+    },
+  ]
+
   return (
     <Container>
+      <JsonLd data={jsonLd} />
       <PageHeader eyebrow="Category" title={category.name} description={category.description}>
         <nav aria-label="Categories" className="mt-8 flex flex-wrap gap-2">
           {categories.map((c) => (

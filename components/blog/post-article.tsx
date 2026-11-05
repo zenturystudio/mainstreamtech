@@ -32,6 +32,13 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
   const url = absoluteUrl(postPath(post.slug))
   const authorHref = post.author.username ? `/author/${post.author.username}` : null
 
+  // An "Updated" line only for real edits made after publishing (updated_at
+  // ignores view counts and the Featured toggle) and more than an hour later.
+  const modified =
+    post.updated_at && post.published_at && Date.parse(post.updated_at) - Date.parse(post.published_at) > 3_600_000
+      ? post.updated_at
+      : null
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -39,11 +46,33 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
     description: post.excerpt,
     image: post.cover_image_url ? [post.cover_image_url] : undefined,
     datePublished: post.published_at,
+    dateModified: modified ?? post.published_at,
+    inLanguage: "en-GB",
+    articleSection: post.category?.name,
     author: authorHref && post.author.id !== "staff"
       ? { "@type": "Person", name: post.author.full_name, url: absoluteUrl(authorHref) }
-      : { "@type": "Organization", name: siteConfig.name },
-    publisher: { "@type": "Organization", name: siteConfig.name, logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") } },
-    mainEntityOfPage: url,
+      : { "@type": "Organization", "@id": absoluteUrl("/#organization"), name: siteConfig.name, url: absoluteUrl(authorHref ?? "/") },
+    publisher: {
+      "@type": "NewsMediaOrganization",
+      "@id": absoluteUrl("/#organization"),
+      name: siteConfig.name,
+      url: absoluteUrl("/"),
+      logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+  }
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "Latest", item: absoluteUrl("/blog") },
+      ...(post.category
+        ? [{ "@type": "ListItem", position: 3, name: post.category.name, item: absoluteUrl(`/category/${post.category.slug}`) }]
+        : []),
+      { "@type": "ListItem", position: post.category ? 4 : 3, name: post.title, item: url },
+    ],
   }
 
   // FAQPage schema, only when the story has FAQs (Google's FAQ rich results).
@@ -66,7 +95,7 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
         <script
           type="application/ld+json"
           // "<" is escaped so post text can never close the script tag.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, breadcrumbJsonLd]).replace(/</g, "\\u003c") }}
         />
       )}
       {!preview && faqJsonLd && (
@@ -111,6 +140,14 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
                   )}
                   <p className="flex flex-wrap items-center gap-x-2 text-muted-foreground">
                     {post.published_at && <time dateTime={post.published_at}>{formatDate(post.published_at, "d MMMM yyyy")}</time>}
+                    {modified && (
+                      <>
+                        <span aria-hidden>·</span>
+                        <span>
+                          Updated <time dateTime={modified}>{formatDate(modified, "d MMMM yyyy")}</time>
+                        </span>
+                      </>
+                    )}
                     <span aria-hidden>·</span>
                     <span className="inline-flex items-center gap-1">
                       <Clock className="size-3.5" aria-hidden /> {post.reading_time} min read
