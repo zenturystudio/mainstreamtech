@@ -14,7 +14,7 @@ type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ page?:
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const tag = await getTagBySlug((await params).slug)
-  if (!tag) return {}
+  if (!tag) notFound()
   return {
     title: `#${tag.name}`,
     description: `Articles tagged ${tag.name} on Mainstream Tech.`,
