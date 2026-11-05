@@ -25,7 +25,7 @@ export async function Header() {
           <Suspense>
             <HeaderSearch className="hidden w-56 md:block xl:w-64" />
           </Suspense>
-          <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label="Search">
+          <Button asChild variant="ghost" size="icon" className="tap-target md:hidden" aria-label="Search">
             <Link href="/search">
               <Search className="size-[18px]" />
             </Link>

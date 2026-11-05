@@ -11,6 +11,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
+      className="tap-target"
       aria-label="Toggle dark mode"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >

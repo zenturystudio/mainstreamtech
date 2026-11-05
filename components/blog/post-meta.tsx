@@ -31,7 +31,7 @@ export function CategoryBadge({ category, className }: { category: Category; cla
     <Link
       href={`/category/${category.slug}`}
       className={cn(
-        "relative z-10 inline-flex w-fit items-center rounded-full bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand transition-colors hover:bg-brand hover:text-brand-foreground",
+        "tap-target z-10 inline-flex w-fit items-center rounded-full bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand transition-colors hover:bg-brand hover:text-brand-foreground",
         className
       )}
     >

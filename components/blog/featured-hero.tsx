@@ -52,7 +52,7 @@ export function FeaturedHero({ lead, picks }: { lead: PostSummary; picks: PostSu
       <aside className="flex flex-col lg:col-span-4">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-mono text-xs tracking-widest text-muted-foreground uppercase">Editor&apos;s picks</h2>
-          <Link href="/blog?sort=popular" className="inline-flex items-center gap-1 text-sm font-medium hover:text-brand">
+          <Link href="/blog?sort=popular" className="tap-target inline-flex items-center gap-1 text-sm font-medium hover:text-brand">
             Most read <ArrowUpRight className="size-4" aria-hidden />
           </Link>
         </div>

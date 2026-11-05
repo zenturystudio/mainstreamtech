@@ -11,6 +11,8 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 const imageCdn = imageCdnOrigin()
 
 const nextConfig: NextConfig = {
+  // Don't advertise the framework in every response.
+  poweredByHeader: false,
   // Lets the admin dev server (npm run dev:admin) build into its own folder
   // so it can run alongside the public dev server.
   distDir: process.env.NEXT_DIST_DIR || ".next",
@@ -32,6 +34,21 @@ const nextConfig: NextConfig = {
   },
   // jsdom (used by isomorphic-dompurify) must not be bundled.
   serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
+  // Baseline security headers on every response. (HSTS is already sent by Vercel.)
+  // No CSP yet: inline theme/JSON-LD scripts and the YouTube embeds would need nonces.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+        ],
+      },
+    ]
+  },
   // Stories moved from /blog/{slug} to /{slug}. Permanent (308) so search
   // engines transfer ranking and old shared links keep working. /blog itself
   // (the Latest page) is untouched because the pattern needs a slug.
@@ -49,7 +66,7 @@ const nextConfig: NextConfig = {
       // Yoast sitemaps that Google already knows about.
       { source: "/:name(sitemap_index|post-sitemap|page-sitemap|category-sitemap|post_tag-sitemap|author-sitemap).xml", destination: "/sitemap.xml", permanent: true },
       // WordPress author pages, until these writers get their own profiles here.
-      { source: "/author/:wp(kristen-elad|secure-login)", destination: "/author/mainstream-tech", permanent: false },
+      { source: "/author/:wp(kristen-elad|secure-login)", destination: "/author/mainstream-tech", permanent: true },
     ]
   },
   experimental: {

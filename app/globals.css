@@ -228,3 +228,18 @@
   border: 0;
   border-radius: var(--radius-xl);
 }
+
+/* Mobile tap targets: grow the touch area to at least 44x44px (WCAG 2.5.5 /
+   Lighthouse) with an invisible overlay, without changing how the control looks. */
+@utility tap-target {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}

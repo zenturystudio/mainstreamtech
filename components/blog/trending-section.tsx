@@ -20,7 +20,7 @@ export function TrendingSection({ posts }: { posts: PostSummary[] }) {
             Trending
           </h2>
         </div>
-        <Link href="/blog?sort=popular" className="inline-flex items-center gap-1 text-sm font-medium hover:text-brand">
+        <Link href="/blog?sort=popular" className="tap-target inline-flex items-center gap-1 text-sm font-medium hover:text-brand">
           See all <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
