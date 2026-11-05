@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { GONE_SLUGS } from "@/lib/gone-slugs"
 import { updateSession } from "@/lib/supabase/middleware"
 
 // Leftovers from the old WordPress site (any /wp or /wp-… path) and bot probes
@@ -7,7 +8,8 @@ import { updateSession } from "@/lib/supabase/middleware"
 const GONE = /^\/(?:wp(?:-[^/]*)?|index\.php|xmlrpc\.php|[&$*])(?:\/|$)/i
 
 export async function middleware(request: NextRequest) {
-  if (GONE.test(request.nextUrl.pathname)) {
+  const { pathname } = request.nextUrl
+  if (GONE.test(pathname) || GONE_SLUGS.has(pathname.replace(/^\/|\/$/g, "").toLowerCase())) {
     return new NextResponse("Gone", { status: 410, headers: { "X-Robots-Tag": "noindex" } })
   }
   return updateSession(request)
