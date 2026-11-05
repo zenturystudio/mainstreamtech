@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const channels = [
   { Icon: Newspaper, title: "News tips", body: "Know something we should cover? We protect our sources.", email: siteConfig.email },
-  { Icon: Mail, title: "Editorial", body: "Corrections, guest posts and general questions.", email: siteConfig.email },
+  { Icon: Mail, title: "Editorial", body: "Corrections, guest posts and general questions. See our editorial policy for how we handle corrections.", email: siteConfig.email },
   { Icon: Megaphone, title: "Advertising & partnerships", body: "Sponsorships, events and collaborations.", email: siteConfig.email },
 ]
 

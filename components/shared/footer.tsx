@@ -28,6 +28,8 @@ export async function Footer() {
             </FooterLink>
           ))}
           <FooterLink href="/search">Search</FooterLink>
+          <FooterLink href="/editorial-policy">Editorial policy</FooterLink>
+          <FooterLink href="/editorial-policy#corrections">Corrections</FooterLink>
         </FooterColumn>
 
         <FooterColumn title="Categories" className="lg:col-span-2">

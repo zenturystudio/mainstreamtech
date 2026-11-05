@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   openGraph: { siteName: siteConfig.name, type: "website", locale: "en_GB" },
   twitter: { card: "summary_large_image" },
+  // Bing Webmaster Tools ownership tag (msvalidate.01), set in Vercel when needed.
+  ...(process.env.BING_SITE_VERIFICATION ? { verification: { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } } : {}),
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

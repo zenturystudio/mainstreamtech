@@ -12,10 +12,4 @@ export const siteConfig = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
-  social: {
-    x: "https://x.com",
-    facebook: "https://facebook.com",
-    linkedin: "https://linkedin.com",
-    youtube: "https://youtube.com",
-  },
 } as const

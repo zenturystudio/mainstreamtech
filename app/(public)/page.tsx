@@ -7,7 +7,7 @@ import { PostCard } from "@/components/blog/post-card"
 import { CategoryList, NewsletterCard, PopularPosts, SidebarSection, TagCloud } from "@/components/blog/sidebar"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/shared/container"
-import { getCategories, getFeaturedPosts, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
+import { getCategories, getFeaturedPosts, getSiteSettings, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
 import { siteConfig } from "@/lib/site"
 import { absoluteUrl } from "@/lib/utils"
 
@@ -16,7 +16,9 @@ export const revalidate = 300
 export const metadata: Metadata = { alternates: { canonical: "/" } }
 
 // Site-level structured data: WebSite (with sitelinks search box) + Organization.
-const siteJsonLd = {
+// sameAs lists the social profiles saved in CMS Settings (none until real ones exist).
+const policy = (anchor: string) => absoluteUrl(`/editorial-policy#${anchor}`)
+const siteJsonLd = (sameAs: string[]) => ({
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -40,20 +42,31 @@ const siteJsonLd = {
       url: absoluteUrl("/"),
       logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") },
       email: siteConfig.email,
+      description: siteConfig.description,
+      areaServed: "GB",
+      foundingLocation: siteConfig.location,
+      publishingPrinciples: absoluteUrl("/editorial-policy"),
+      correctionsPolicy: policy("corrections"),
+      verificationFactCheckingPolicy: policy("sourcing"),
+      ethicsPolicy: policy("independence"),
+      actionableFeedbackPolicy: policy("feedback"),
+      contactPoint: { "@type": "ContactPoint", contactType: "newsroom", email: siteConfig.email, url: absoluteUrl("/contact") },
+      ...(sameAs.length ? { sameAs } : {}),
     },
   ],
-}
+})
 
 // One lead card + a 2×4 grid. The full, paginated list lives on /blog.
 const LATEST_COUNT = 9
 
 export default async function HomePage() {
-  const [featured, trending, categories, popular, tags] = await Promise.all([
+  const [featured, trending, categories, popular, tags, settings] = await Promise.all([
     getFeaturedPosts(5),
     getTrendingPosts(4),
     getCategories(),
     getPopularPosts(5),
     getTags(),
+    getSiteSettings(),
   ])
   const [lead, ...picks] = featured
   const latest = await getPosts({ perPage: LATEST_COUNT, exclude: lead ? [lead.id] : [] })
@@ -61,7 +74,7 @@ export default async function HomePage() {
 
   return (
     <Container className="pt-8 sm:pt-12">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(Object.values(settings.social_links))).replace(/</g, "\\u003c") }} />
       {/* One h1 per page for search engines and screen readers; the design leads with the hero instead. */}
       <h1 className="sr-only">
         {siteConfig.name}: {siteConfig.tagline}

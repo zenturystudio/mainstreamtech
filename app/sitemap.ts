@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/blog"), lastModified: latestDate },
     { url: absoluteUrl("/about") },
     { url: absoluteUrl("/contact") },
+    { url: absoluteUrl("/editorial-policy") },
     ...posts.map((p) => ({
       url: absoluteUrl(postPath(p.slug)),
       lastModified: new Date(p.updated_at),

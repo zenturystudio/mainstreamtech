@@ -1,6 +1,5 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter, FaYoutube } from "react-icons/fa6"
 import { getSiteSettings } from "@/lib/queries/public"
-import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 const NETWORKS = [
@@ -11,10 +10,10 @@ const NETWORKS = [
   { key: "instagram", label: "Instagram", Icon: FaInstagram },
 ] as const
 
-/** Social profiles from Settings in the CMS (falls back to the defaults in lib/site). */
+/** Social profiles from Settings in the CMS. Nothing shows until real profile URLs are saved there. */
 export async function SocialLinks({ className }: { className?: string }) {
   const settings = await getSiteSettings()
-  const links: Record<string, string> = Object.keys(settings.social_links).length ? settings.social_links : siteConfig.social
+  const links = settings.social_links
   const items = NETWORKS.filter((n) => links[n.key])
   if (!items.length) return null
 

@@ -58,6 +58,7 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
       "@id": absoluteUrl("/#organization"),
       name: siteConfig.name,
       url: absoluteUrl("/"),
+      publishingPrinciples: absoluteUrl("/editorial-policy"),
       logo: { "@type": "ImageObject", url: absoluteUrl("/logo-dark.png") },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
@@ -200,6 +201,18 @@ export function PostArticle({ post, related, adjacent, preview }: Props) {
                   <FaqAccordion faqs={post.faqs} />
                 </section>
               )}
+
+              <p className="mt-10 text-sm text-muted-foreground">
+                Spotted an error?{" "}
+                <a href={`mailto:${siteConfig.email}?subject=${encodeURIComponent(`Correction: ${post.title}`)}`} className="font-medium text-foreground underline underline-offset-4 hover:text-brand">
+                  Tell us
+                </a>
+                . Read how we report and correct stories in our{" "}
+                <Link href="/editorial-policy" className="font-medium text-foreground underline underline-offset-4 hover:text-brand">
+                  editorial policy
+                </Link>
+                .
+              </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-muted/40 px-6 py-5">
                 <p className="font-semibold">Enjoyed this story? Share it.</p>

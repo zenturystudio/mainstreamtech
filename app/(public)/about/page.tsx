@@ -34,10 +34,11 @@ const principles = [
 export default async function AboutPage() {
   const [authors, posts, categories] = await Promise.all([getAuthors(), getPosts({ perPage: 1000 }), getCategories()])
 
+  // "Writers" only appears once named writers have published stories.
   const stats = [
     { label: "Stories published", value: posts.total.toString() },
     { label: "Sections", value: categories.length.toString() },
-    { label: "Writers", value: authors.length.toString() },
+    ...(authors.length ? [{ label: "Writers", value: authors.length.toString() }] : []),
     { label: "Newsroom", value: "London" },
   ]
 
@@ -75,7 +76,7 @@ export default async function AboutPage() {
       </Container>
 
       <Container className="mt-20">
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border bg-border lg:grid-cols-4">
+        <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-2xl border bg-border ${stats.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           {stats.map((s) => (
             <div key={s.label} className="bg-background p-6 sm:p-8">
               <dt className="text-sm text-muted-foreground">{s.label}</dt>
@@ -98,26 +99,35 @@ export default async function AboutPage() {
             </div>
           ))}
         </div>
+        <p className="mt-8 text-muted-foreground">
+          Read the full standards, including how we source stories, correct mistakes and use AI tools, in our{" "}
+          <Link href="/editorial-policy" className="font-medium text-foreground underline underline-offset-4 hover:text-brand">
+            editorial policy
+          </Link>
+          .
+        </p>
       </Container>
 
-      <Container className="mt-24">
-        <h2 className="text-3xl font-bold tracking-tight">Meet the team</h2>
-        <ul className="mt-10 grid gap-6 md:grid-cols-3">
-          {authors.map((a) => (
-            <li key={a.id} className="group relative flex flex-col rounded-2xl border p-7 transition-colors hover:bg-muted/40">
-              <AuthorAvatar author={a} size={64} />
-              <h3 className="mt-5 text-lg font-semibold">
-                <Link href={`/author/${a.username}`} className="after:absolute after:inset-0 group-hover:text-brand">
-                  {a.full_name}
-                </Link>
-              </h3>
-              <p className="text-sm text-muted-foreground">{a.title}</p>
-              <p className="mt-3 line-clamp-3 leading-relaxed text-foreground/80">{a.bio}</p>
-              <p className="mt-auto pt-5 text-sm font-medium text-brand">{a.postCount} stories →</p>
-            </li>
-          ))}
-        </ul>
-      </Container>
+      {authors.length > 0 && (
+        <Container className="mt-24">
+          <h2 className="text-3xl font-bold tracking-tight">Meet the team</h2>
+          <ul className="mt-10 grid gap-6 md:grid-cols-3">
+            {authors.map((a) => (
+              <li key={a.id} className="group relative flex flex-col rounded-2xl border p-7 transition-colors hover:bg-muted/40">
+                <AuthorAvatar author={a} size={64} />
+                <h3 className="mt-5 text-lg font-semibold">
+                  <Link href={`/author/${a.username}`} className="after:absolute after:inset-0 group-hover:text-brand">
+                    {a.full_name}
+                  </Link>
+                </h3>
+                <p className="text-sm text-muted-foreground">{a.title}</p>
+                <p className="mt-3 line-clamp-3 leading-relaxed text-foreground/80">{a.bio}</p>
+                <p className="mt-auto pt-5 text-sm font-medium text-brand">{a.postCount} stories →</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      )}
     </>
   )
 }
