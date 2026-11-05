@@ -16,7 +16,7 @@ const AUTHOR = "author:profiles(id, full_name, username, avatar_url, bio, role)"
 const CATEGORY = "category:categories(id, name, slug, description)"
 const TAGS = "post_tags(tag:tags(id, name, slug))"
 const SUMMARY_COLUMNS = `id, title, slug, excerpt, cover_image_url, cover_image_alt, status, published_at, featured, views, reading_time, meta_title, meta_description, ${AUTHOR}, ${CATEGORY}, ${TAGS}`
-const POST_COLUMNS = `${SUMMARY_COLUMNS}, content, faqs`
+const POST_COLUMNS = `${SUMMARY_COLUMNS}, content, faqs, updated_at`
 
 /**
  * Byline for posts with no author account (imported stories, or a deleted
@@ -49,6 +49,7 @@ type Row = {
   meta_description: string | null
   content?: string
   faqs?: unknown
+  updated_at?: string
   author: Author | null
   category: Category | null
   post_tags: { tag: Tag | null }[] | null
@@ -75,7 +76,7 @@ function toSummary(row: Row): PostSummary {
   }
 }
 
-export const toPost = (row: Row): Post => ({ ...toSummary(row), content: row.content ?? "", faqs: parseFaqs(row.faqs) })
+export const toPost = (row: Row): Post => ({ ...toSummary(row), content: row.content ?? "", faqs: parseFaqs(row.faqs), updated_at: row.updated_at ?? null })
 
 function db() {
   return createPublicClient()
@@ -184,10 +185,10 @@ export const getPostBySlug = cache(async (slug: string): Promise<Post | null> =>
   return data ? toPost(data as unknown as Row) : null
 })
 
-type SitemapPost = { slug: string; published_at: string | null; updated_at: string; cover_image_url: string | null }
+type SitemapPost = { slug: string; published_at: string | null; updated_at: string; cover_image_url: string | null; category_id: string | null }
 
 export async function getAllPostSlugs(): Promise<SitemapPost[]> {
-  const { data } = await livePosts("slug, published_at, updated_at, cover_image_url").order("published_at", { ascending: false })
+  const { data } = await livePosts("slug, published_at, updated_at, cover_image_url, category_id").order("published_at", { ascending: false })
   return (data ?? []) as unknown as SitemapPost[]
 }
 

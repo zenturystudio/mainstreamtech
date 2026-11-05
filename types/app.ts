@@ -11,6 +11,8 @@ export type Faq = { question: string; answer: string }
 
 export type Post = Omit<Tables<"posts">, "search_vector" | "author_id" | "category_id" | "created_at" | "updated_at" | "faqs" | "source" | "source_meta"> & {
   faqs: Faq[]
+  /** Last real edit (see migration 20261105000000); null in CMS previews. */
+  updated_at?: string | null
   author: Author
   category: Category | null
   tags: Tag[]
