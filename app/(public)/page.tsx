@@ -61,16 +61,17 @@ const LATEST_COUNT = 9
 
 export default async function HomePage() {
   // The hero always shows the newest posts: the lead is the latest story, the side list the next four.
-  const [newest, trending, categories, popular, tags, settings] = await Promise.all([
+  const [newest, categories, popular, tags, settings] = await Promise.all([
     getPosts({ perPage: 5 }),
-    getTrendingPosts(4),
     getCategories(),
-    getPopularPosts(5),
+    getPopularPosts(5, 7),
     getTags(),
     getSiteSettings(),
   ])
   const [lead, ...picks] = newest.items
-  const latest = await getPosts({ perPage: LATEST_COUNT, exclude: newest.items.map((p) => p.id) })
+  const heroIds = newest.items.map((p) => p.id)
+  const trending = await getTrendingPosts(4, 2, heroIds)
+  const latest = await getPosts({ perPage: LATEST_COUNT, exclude: [...heroIds, ...trending.map((p) => p.id)] })
   const [first, ...rest] = latest.items
 
   return (
@@ -119,7 +120,7 @@ export default async function HomePage() {
           <SidebarSection title="Categories">
             <CategoryList categories={categories} />
           </SidebarSection>
-          <SidebarSection title="Most read (all time)">
+          <SidebarSection title="Most read this week">
             <PopularPosts posts={popular} />
           </SidebarSection>
           <div className="flex flex-col gap-6 lg:sticky lg:top-24">

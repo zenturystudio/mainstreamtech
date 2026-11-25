@@ -159,22 +159,30 @@ export async function getFeaturedPosts(limit = 4): Promise<PostSummary[]> {
 }
 
 /** Most-read stories published in the last `days`, topped up with all-time favourites. */
-export async function getTrendingPosts(limit = 4, days = 30): Promise<PostSummary[]> {
+// Trending: the most-read posts from the last few days, shown newest first. Topped up with the newest
+// posts when too few recent ones have views, so the section never shows weeks-old stories.
+export async function getTrendingPosts(limit = 4, days = 2, exclude: string[] = []): Promise<PostSummary[]> {
   const since = new Date(Date.now() - days * 86_400_000).toISOString()
-  const { data, error } = await livePosts(SUMMARY_COLUMNS).gte("published_at", since).order("views", { ascending: false }).limit(limit)
+  let q = livePosts(SUMMARY_COLUMNS).gte("published_at", since).gt("views", 0).order("views", { ascending: false }).limit(limit)
+  if (exclude.length) q = q.not("id", "in", `(${exclude.join(",")})`)
+  const { data, error } = await q
   if (error) throw error
-  const recent = ((data ?? []) as unknown as Row[]).map(toSummary)
-  if (recent.length >= limit) return recent
-
-  const exclude = recent.map((p) => p.id)
-  let fill = livePosts(SUMMARY_COLUMNS).order("views", { ascending: false }).limit(limit - recent.length)
-  if (exclude.length) fill = fill.not("id", "in", `(${exclude.join(",")})`)
-  const { data: more } = await fill
-  return [...recent, ...((more ?? []) as unknown as Row[]).map(toSummary)]
+  const picked = ((data ?? []) as unknown as Row[]).map(toSummary)
+  if (picked.length < limit) {
+    const skip = [...exclude, ...picked.map((p) => p.id)]
+    let fill = livePosts(SUMMARY_COLUMNS).order("published_at", { ascending: false }).limit(limit - picked.length)
+    if (skip.length) fill = fill.not("id", "in", `(${skip.join(",")})`)
+    const { data: more } = await fill
+    picked.push(...((more ?? []) as unknown as Row[]).map(toSummary))
+  }
+  return picked.sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""))
 }
 
-export async function getPopularPosts(limit = 5): Promise<PostSummary[]> {
-  const { data, error } = await livePosts(SUMMARY_COLUMNS).order("views", { ascending: false }).limit(limit)
+// Most read within the last `days` days (all time when days is omitted).
+export async function getPopularPosts(limit = 5, days?: number): Promise<PostSummary[]> {
+  let q = livePosts(SUMMARY_COLUMNS)
+  if (days) q = q.gte("published_at", new Date(Date.now() - days * 86_400_000).toISOString())
+  const { data, error } = await q.order("views", { ascending: false }).order("published_at", { ascending: false }).limit(limit)
   if (error) throw error
   return ((data ?? []) as unknown as Row[]).map(toSummary)
 }
