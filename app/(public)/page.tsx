@@ -7,7 +7,7 @@ import { PostCard } from "@/components/blog/post-card"
 import { CategoryList, NewsletterCard, PopularPosts, SidebarSection, TagCloud } from "@/components/blog/sidebar"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/shared/container"
-import { getCategories, getFeaturedPosts, getSiteSettings, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
+import { getCategories, getSiteSettings, getPopularPosts, getPosts, getTags, getTrendingPosts } from "@/lib/queries/public"
 import { siteConfig } from "@/lib/site"
 import { absoluteUrl } from "@/lib/utils"
 
@@ -60,16 +60,17 @@ const siteJsonLd = (sameAs: string[]) => ({
 const LATEST_COUNT = 9
 
 export default async function HomePage() {
-  const [featured, trending, categories, popular, tags, settings] = await Promise.all([
-    getFeaturedPosts(5),
+  // The hero always shows the newest posts: the lead is the latest story, the side list the next four.
+  const [newest, trending, categories, popular, tags, settings] = await Promise.all([
+    getPosts({ perPage: 5 }),
     getTrendingPosts(4),
     getCategories(),
     getPopularPosts(5),
     getTags(),
     getSiteSettings(),
   ])
-  const [lead, ...picks] = featured
-  const latest = await getPosts({ perPage: LATEST_COUNT, exclude: lead ? [lead.id] : [] })
+  const [lead, ...picks] = newest.items
+  const latest = await getPosts({ perPage: LATEST_COUNT, exclude: newest.items.map((p) => p.id) })
   const [first, ...rest] = latest.items
 
   return (
